@@ -1,92 +1,88 @@
-# La Casita — Sistema de Caja (Aplicacion de Escritorio)
+# La Casita Delicatessen — Sistema de Caja v2
 
-Aplicacion de punto de venta para uso en las cajas fisicas de La Casita Delicatessen.
-Disenada para reemplazar NOVACAJA con una experiencia mas moderna y alineada al branding de La Casita.
+Sistema de punto de venta rediseñado, conectado a Neon PostgreSQL.
 
 ---
 
 ## Requisitos
 
-- **Python 3.8 o superior** (incluye tkinter por defecto en Windows y macOS)
-- Sin dependencias externas — corre con Python estandar
-
-En Linux puede ser necesario instalar tkinter:
-```bash
-# Ubuntu / Debian
-sudo apt install python3-tk
-```
+- **Python 3.8+** (incluye tkinter)
+- **psycopg2-binary** (se instala automáticamente)
+- Conexión a internet para sincronizar con Neon
 
 ---
 
-## Iniciar la aplicacion
+## Inicio rápido
 
-**Windows:**
+### Windows
 ```
 iniciar_caja.bat
 ```
 
-**macOS / Linux:**
+### macOS / Linux
 ```bash
 chmod +x iniciar_caja.sh
 ./iniciar_caja.sh
 ```
 
-**Directamente:**
+### Manual
 ```bash
-python3 caja.py
+pip install psycopg2-binary
+python caja.py
 ```
+
+---
+
+## Conexión a la base de datos
+
+La app se conecta automáticamente a:
+```
+Neon PostgreSQL (us-east-1)
+Base: neondb
+```
+
+**Si no hay conexión:** la app funciona en modo offline con productos de prueba.
+
+Las tablas se crean automáticamente en el primer arranque:
+- `products` — catálogo de productos con stock
+- `sales` — registro de ventas
+- `sale_items` — detalle de cada venta
+
+---
+
+## Funcionalidades
+
+| Función | Descripción |
+|---------|-------------|
+| 🛍 Productos en tiempo real | Se leen del stock en Neon |
+| ➖ Descuento automático | Al completar una venta, el stock se descuenta en BD |
+| 🔍 Búsqueda | Por nombre o SKU (con debounce 250ms) |
+| 🏷 Filtros por categoría | Quesos, Carnes Frías, Vinos, etc. |
+| 💳 Métodos de pago | Efectivo / Tarjeta |
+| 🧾 Historial | Ventas guardadas con folio, fecha, cajero |
+| 📱 Modo offline | Datos mock si no hay conexión |
 
 ---
 
 ## Atajos de teclado
 
-| Tecla | Accion |
+| Tecla | Acción |
 |-------|--------|
-| F1 | Enfocar busqueda de articulos |
+| F1 | Enfocar buscador |
 | F2 | Procesar cobro |
-| F3 | Limpiar venta actual |
-| Enter (en busqueda) | Agregar articulo si hay coincidencia unica o codigo exacto |
-| Doble clic (en articulo) | Agregar al carrito |
-| Escape | Limpiar busqueda |
+| F3 | Limpiar ticket |
+| Enter (en búsqueda) | Agregar si hay un solo resultado |
+| Escape | Limpiar búsqueda |
 
 ---
 
-## Estructura del archivo
+## Estructura
 
 ```
-caja/
-  caja.py           # Aplicacion principal
-  iniciar_caja.bat  # Arranque Windows
-  iniciar_caja.sh   # Arranque macOS/Linux
+lacasita-pos/
+  caja.py            # Aplicación principal
+  setup.py           # Configuración inicial
+  iniciar_caja.bat   # Arranque Windows
+  iniciar_caja.sh    # Arranque macOS/Linux
   README.md
 ```
-
----
-
-## Conexion con backend (pendiente)
-
-El modulo `caja.py` incluye datos mock (`MOCK_PRODUCTS`) para desarrollo.
-Al conectar con la API del backend, reemplazar las funciones:
-
-- `_on_search_change()` — busqueda de productos via `GET /api/products?q=...`
-- `_add_to_cart()` — verificacion de stock en tiempo real
-- `_process_sale()` — registro de venta via `POST /api/sales`
-- `init()` — login de cajero via `POST /api/auth/login`
-
-La URL base del servidor se definira en una variable de configuracion (`API_BASE_URL`).
-
----
-
-## Estado actual
-
-- [x] Interfaz de caja completa
-- [x] Busqueda de productos por nombre y codigo de barras
-- [x] Carrito de compras con control de cantidades
-- [x] Seleccion de metodo de pago (efectivo / tarjeta / transferencia)
-- [x] Calculo automatico de cambio
-- [x] Dialogo de confirmacion de venta
-- [x] Atajos de teclado
-- [ ] Conexion con API backend (siguiente fase)
-- [ ] Login de cajero con seleccion de sucursal
-- [ ] Impresion de ticket
-- [ ] Apertura y cierre de caja
