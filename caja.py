@@ -65,229 +65,407 @@ def fm(size=10, weight="normal"):
 
 # ── DATOS MOCK (fallback si no hay BD) ──────────────────────────
 MOCK_PRODUCTS = [
-    {"id": 1,  "sku": "QSO-001", "name": "Queso Manchego",       "price": 189.00, "stock": 24, "category": "Quesos",       "unit": "kg",    "emoji": "🧀"},
-    {"id": 2,  "sku": "CRN-002", "name": "Jamón Serrano",         "price": 320.00, "stock": 5,  "category": "Carnes Frías", "unit": "kg",    "emoji": "🥩"},
-    {"id": 3,  "sku": "VIN-003", "name": "Vino Tinto Reserva",    "price": 285.00, "stock": 12, "category": "Vinos",        "unit": "pza",   "emoji": "🍷"},
-    {"id": 4,  "sku": "PAN-004", "name": "Pan Baguette",          "price":  45.00, "stock": 20, "category": "Panadería",    "unit": "pza",   "emoji": "🥖"},
-    {"id": 5,  "sku": "ACE-005", "name": "Aceite de Oliva Extra", "price": 198.00, "stock":  9, "category": "Aceites",      "unit": "500ml", "emoji": "🫒"},
-    {"id": 6,  "sku": "DLC-006", "name": "Chocolate Belga",       "price": 125.00, "stock":  3, "category": "Dulces",       "unit": "pza",   "emoji": "🍫"},
-    {"id": 7,  "sku": "QSO-007", "name": "Queso Brie",            "price": 165.00, "stock":  7, "category": "Quesos",       "unit": "pza",   "emoji": "🧀"},
-    {"id": 8,  "sku": "CRN-008", "name": "Salami Italiano",       "price": 145.00, "stock":  0, "category": "Carnes Frías", "unit": "kg",    "emoji": "🥩"},
-    {"id": 9,  "sku": "VIN-009", "name": "Prosecco Brut",         "price": 310.00, "stock": 15, "category": "Vinos",        "unit": "pza",   "emoji": "🥂"},
-    {"id": 10, "sku": "PAN-010", "name": "Croissant Mantequilla", "price":  38.00, "stock": 18, "category": "Panadería",    "unit": "pza",   "emoji": "🥐"},
-    {"id": 11, "sku": "DLC-011", "name": "Mermelada Artesanal",   "price":  89.00, "stock":  2, "category": "Dulces",       "unit": "pza",   "emoji": "🍓"},
-    {"id": 12, "sku": "QSO-011", "name": "Queso Gouda",           "price": 175.00, "stock": 11, "category": "Quesos",       "unit": "kg",    "emoji": "🧀"},
-    {"id": 13, "sku": "CRN-012", "name": "Paté de Campaña",       "price": 110.00, "stock":  6, "category": "Carnes Frías", "unit": "pza",   "emoji": "🍖"},
-    {"id": 14, "sku": "ACE-014", "name": "Vinagre Balsámico",     "price": 155.00, "stock":  8, "category": "Aceites",      "unit": "250ml", "emoji": "🫙"},
-    {"id": 15, "sku": "PAN-015", "name": "Pan de Nuez",           "price":  62.00, "stock": 14, "category": "Panadería",    "unit": "pza",   "emoji": "🍞"},
-    {"id": 16, "sku": "DLC-016", "name": "Turrón de Almendra",    "price":  95.00, "stock":  6, "category": "Dulces",       "unit": "pza",   "emoji": "🍬"},
+    {"id": 1,  "codigo_barras": "QSO-001", "nombre": "Queso Manchego",       "precio_venta": 189.00, "stock_actual": 24, "categoria": "Quesos",       "emoji": "🧀"},
+    {"id": 2,  "codigo_barras": "CRN-002", "nombre": "Jamón Serrano",         "precio_venta": 320.00, "stock_actual": 5,  "categoria": "Carnes Frías", "emoji": "🥩"},
+    {"id": 3,  "codigo_barras": "VIN-003", "nombre": "Vino Tinto Reserva",    "precio_venta": 285.00, "stock_actual": 12, "categoria": "Vinos",        "emoji": "🍷"},
+    {"id": 4,  "codigo_barras": "PAN-004", "nombre": "Pan Baguette",          "precio_venta":  45.00, "stock_actual": 20, "categoria": "Panadería",    "emoji": "🥖"},
+    {"id": 5,  "codigo_barras": "ACE-005", "nombre": "Aceite de Oliva Extra", "precio_venta": 198.00, "stock_actual":  9, "categoria": "Aceites",      "emoji": "🫒"},
+    {"id": 6,  "codigo_barras": "DLC-006", "nombre": "Chocolate Belga",       "precio_venta": 125.00, "stock_actual":  3, "categoria": "Dulces",       "emoji": "🍫"},
+    {"id": 7,  "codigo_barras": "QSO-007", "nombre": "Queso Brie",            "precio_venta": 165.00, "stock_actual":  7, "categoria": "Quesos",       "emoji": "🧀"},
+    {"id": 8,  "codigo_barras": "CRN-008", "nombre": "Salami Italiano",       "precio_venta": 145.00, "stock_actual":  0, "categoria": "Carnes Frías", "emoji": "🥩"},
+    {"id": 9,  "codigo_barras": "VIN-009", "nombre": "Prosecco Brut",         "precio_venta": 310.00, "stock_actual": 15, "categoria": "Vinos",        "emoji": "🥂"},
+    {"id": 10, "codigo_barras": "PAN-010", "nombre": "Croissant Mantequilla", "precio_venta":  38.00, "stock_actual": 18, "categoria": "Panadería",    "emoji": "🥐"},
+    {"id": 11, "codigo_barras": "DLC-011", "nombre": "Mermelada Artesanal",   "precio_venta":  89.00, "stock_actual":  2, "categoria": "Dulces",       "emoji": "🍓"},
+    {"id": 12, "codigo_barras": "QSO-011", "nombre": "Queso Gouda",           "precio_venta": 175.00, "stock_actual": 11, "categoria": "Quesos",       "emoji": "🧀"},
+    {"id": 13, "codigo_barras": "CRN-012", "nombre": "Paté de Campaña",       "precio_venta": 110.00, "stock_actual":  6, "categoria": "Carnes Frías", "emoji": "🍖"},
+    {"id": 14, "codigo_barras": "ACE-014", "nombre": "Vinagre Balsámico",     "precio_venta": 155.00, "stock_actual":  8, "categoria": "Aceites",      "emoji": "🫙"},
+    {"id": 15, "codigo_barras": "PAN-015", "nombre": "Pan de Nuez",           "precio_venta":  62.00, "stock_actual": 14, "categoria": "Panadería",    "emoji": "🍞"},
+    {"id": 16, "codigo_barras": "DLC-016", "nombre": "Turrón de Almendra",    "precio_venta":  95.00, "stock_actual":  6, "categoria": "Dulces",       "emoji": "🍬"},
 ]
 
-MOCK_USER     = {"id": "U01", "name": "María G.",     "role": "cajero"}
+MOCK_USER     = {"id": 2, "name": "Cajero 1", "role": "cajero"}
 MOCK_LOCATION = {"id": "L01", "name": "Sucursal Centro"}
 
-FOLIO_COUNTER = [4763]
+# Folio counter — se sincroniza con BD al conectar
+FOLIO_COUNTER = [0]
 
-CATEGORIES = ["Todos", "Quesos", "Carnes Frías", "Vinos", "Panadería", "Dulces", "Aceites"]
-
-# ── Usuarios del sistema ─────────────────────────────────────────
+# ── Usuarios del sistema (login local para la caja) ─────────────
 SYSTEM_USERS = {
-    "prueba": ("prueba",   "Usuario Prueba"),
-    "maria":  ("maria123", "María G."),
-    "admin":  ("admin",    "Administrador"),
+    "prueba": ("prueba",   "Usuario Prueba",   None),
+    "maria":  ("maria123", "María G.",          None),
+    "admin":  ("admin",    "Administrador",     None),
 }
 
 
 # ════════════════════════════════════════════════════════════════
-#  DATABASE MANAGER
+#  DATABASE MANAGER — conectado al esquema tienda_abarrotes
+#  Tablas: productos, categorias, ventas, detalle_venta,
+#          movimientos_inventario, usuarios
+#  Función stored: registrar_venta()
 # ════════════════════════════════════════════════════════════════
 class DBManager:
     def __init__(self):
-        self.conn = None
+        self.conn      = None
         self.connected = False
         self._connect()
 
+    # ── Conexión ────────────────────────────────────────────────
     def _connect(self):
         if not DB_AVAILABLE:
+            print("[DB] psycopg2 no disponible — modo offline")
             return
         try:
-            self.conn = psycopg2.connect(DB_URL, connect_timeout=5)
+            self.conn = psycopg2.connect(DB_URL, connect_timeout=8)
             self.conn.autocommit = False
             self.connected = True
-            self._ensure_schema()
+            print("[DB] Conectado a Neon PostgreSQL")
+            self._sync_folio_counter()
         except Exception as e:
             print(f"[DB] No se pudo conectar: {e}")
             self.connected = False
 
-    def _ensure_schema(self):
+    # ── Sincroniza el contador de folios con la BD ──────────────
+    def _sync_folio_counter(self):
+        """Lee el último folio CAJA-XXXXXX y ajusta el contador local."""
         try:
             cur = self.conn.cursor()
             cur.execute("""
-                CREATE TABLE IF NOT EXISTS products (
-                    id         SERIAL PRIMARY KEY,
-                    sku        VARCHAR(20) UNIQUE NOT NULL,
-                    name       VARCHAR(200) NOT NULL,
-                    price      NUMERIC(10,2) NOT NULL DEFAULT 0,
-                    stock      INTEGER NOT NULL DEFAULT 0,
-                    category   VARCHAR(100),
-                    unit       VARCHAR(20) DEFAULT 'pza',
-                    emoji      VARCHAR(10) DEFAULT '📦',
-                    active     BOOLEAN DEFAULT TRUE,
-                    created_at TIMESTAMPTZ DEFAULT NOW()
-                );
-                CREATE TABLE IF NOT EXISTS sales (
-                    id         SERIAL PRIMARY KEY,
-                    folio      VARCHAR(20),
-                    total      NUMERIC(10,2),
-                    subtotal   NUMERIC(10,2),
-                    tax        NUMERIC(10,2),
-                    payment    VARCHAR(20),
-                    cashier    VARCHAR(100),
-                    location   VARCHAR(100),
-                    created_at TIMESTAMPTZ DEFAULT NOW()
-                );
-                CREATE TABLE IF NOT EXISTS sale_items (
-                    id           SERIAL PRIMARY KEY,
-                    sale_id      INTEGER REFERENCES sales(id),
-                    product_id   INTEGER REFERENCES products(id),
-                    product_name VARCHAR(200),
-                    qty          INTEGER,
-                    unit_price   NUMERIC(10,2),
-                    subtotal     NUMERIC(10,2)
-                );
+                SELECT folio FROM ventas
+                WHERE canal = 'caja' AND folio LIKE 'CAJA-%'
+                ORDER BY id DESC LIMIT 1
             """)
-            self.conn.commit()
-
-            cur.execute("SELECT COUNT(*) FROM products")
-            count = cur.fetchone()[0]
-            if count == 0:
-                for p in MOCK_PRODUCTS:
-                    cur.execute("""
-                        INSERT INTO products (sku, name, price, stock, category, unit, emoji)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        ON CONFLICT (sku) DO NOTHING
-                    """, (p["sku"], p["name"], p["price"], p["stock"],
-                          p["category"], p["unit"], p["emoji"]))
-                self.conn.commit()
+            row = cur.fetchone()
+            if row:
+                try:
+                    num = int(row[0].split("-")[1])
+                    FOLIO_COUNTER[0] = num
+                    print(f"[DB] Último folio encontrado: {row[0]}")
+                except:
+                    FOLIO_COUNTER[0] = 0
+            else:
+                FOLIO_COUNTER[0] = 0
         except Exception as e:
-            print(f"[DB] Schema error: {e}")
-            try: self.conn.rollback()
-            except: pass
+            print(f"[DB] _sync_folio_counter error: {e}")
 
-    def get_products(self, search="", category="Todos"):
+    # ── Reconexión automática ───────────────────────────────────
+    def _ensure_connection(self):
+        """Intenta reconectar si la conexión se cayó."""
         if not self.connected:
+            return False
+        try:
+            self.conn.cursor().execute("SELECT 1")
+            return True
+        except:
+            print("[DB] Conexión perdida — intentando reconectar...")
+            try:
+                self.conn = psycopg2.connect(DB_URL, connect_timeout=5)
+                self.conn.autocommit = False
+                print("[DB] Reconectado")
+                return True
+            except Exception as e:
+                print(f"[DB] Reconexión fallida: {e}")
+                self.connected = False
+                return False
+
+    # ──────────────────────────────────────────────────────────────
+    #  PRODUCTOS
+    #  Lee de: productos JOIN categorias
+    #  Campos usados por la UI: id, codigo_barras, nombre,
+    #    precio_venta, stock_actual, categoria (nombre), emoji
+    # ──────────────────────────────────────────────────────────────
+    def get_products(self, search="", category="Todos"):
+        if not self._ensure_connection():
             return self._filter_mock(search, category)
         try:
             cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            q = "SELECT * FROM products WHERE active=TRUE"
+            q = """
+                SELECT
+                    p.id,
+                    p.codigo_barras,
+                    p.nombre,
+                    p.precio_venta,
+                    p.stock_actual,
+                    p.stock_minimo,
+                    c.nombre AS categoria,
+                    COALESCE(p.imagen_url, '📦') AS emoji
+                FROM productos p
+                LEFT JOIN categorias c ON c.id = p.categoria_id
+                WHERE p.activo = TRUE
+            """
             params = []
             if search:
-                q += " AND (LOWER(name) LIKE %s OR LOWER(sku) LIKE %s)"
+                q += " AND (LOWER(p.nombre) LIKE %s OR LOWER(p.codigo_barras) LIKE %s)"
                 params += [f"%{search.lower()}%", f"%{search.lower()}%"]
             if category and category != "Todos":
-                q += " AND category=%s"
+                q += " AND c.nombre = %s"
                 params.append(category)
-            q += " ORDER BY category, name"
+            q += " ORDER BY c.nombre, p.nombre"
             cur.execute(q, params)
-            return [dict(r) for r in cur.fetchall()]
+            rows = cur.fetchall()
+            return [dict(r) for r in rows]
         except Exception as e:
             print(f"[DB] get_products error: {e}")
+            try: self.conn.rollback()
+            except: pass
             return self._filter_mock(search, category)
 
-    def get_product_by_sku(self, sku):
-        """Busca un producto exacto por SKU (para escáner)."""
-        if not self.connected:
-            match = next((p for p in MOCK_PRODUCTS if p["sku"].lower() == sku.lower()), None)
+    def get_product_by_barcode(self, barcode):
+        """Búsqueda exacta por código de barras — para escáner Zebra TC52."""
+        if not self._ensure_connection():
+            match = next((p for p in MOCK_PRODUCTS
+                          if p["codigo_barras"].lower() == barcode.lower()), None)
             return match
         try:
             cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            cur.execute("SELECT * FROM products WHERE LOWER(sku)=LOWER(%s) AND active=TRUE", (sku,))
+            cur.execute("""
+                SELECT
+                    p.id,
+                    p.codigo_barras,
+                    p.nombre,
+                    p.precio_venta,
+                    p.stock_actual,
+                    p.stock_minimo,
+                    c.nombre AS categoria,
+                    COALESCE(p.imagen_url, '📦') AS emoji
+                FROM productos p
+                LEFT JOIN categorias c ON c.id = p.categoria_id
+                WHERE p.activo = TRUE
+                  AND LOWER(p.codigo_barras) = LOWER(%s)
+            """, (barcode,))
             row = cur.fetchone()
             return dict(row) if row else None
         except Exception as e:
-            print(f"[DB] get_product_by_sku error: {e}")
+            print(f"[DB] get_product_by_barcode error: {e}")
             return None
+
+    def get_stock(self, product_id):
+        """Stock en tiempo real directamente desde la BD."""
+        if not self._ensure_connection():
+            p = next((x for x in MOCK_PRODUCTS if x["id"] == product_id), None)
+            return p["stock_actual"] if p else 0
+        try:
+            cur = self.conn.cursor()
+            cur.execute("SELECT stock_actual FROM productos WHERE id = %s", (product_id,))
+            row = cur.fetchone()
+            return row[0] if row else 0
+        except Exception as e:
+            print(f"[DB] get_stock error: {e}")
+            return 0
 
     def _filter_mock(self, search, category):
         result = MOCK_PRODUCTS
         if search:
-            result = [p for p in result if search.lower() in p["name"].lower()
-                      or search.lower() in p["sku"].lower()]
+            result = [p for p in result
+                      if search.lower() in p["nombre"].lower()
+                      or search.lower() in p["codigo_barras"].lower()]
         if category and category != "Todos":
-            result = [p for p in result if p["category"] == category]
+            result = [p for p in result if p.get("categoria") == category]
         return result
 
-    def update_stock(self, product_id, delta):
-        if not self.connected:
-            for p in MOCK_PRODUCTS:
-                if p["id"] == product_id:
-                    p["stock"] = max(0, p["stock"] + delta)
-            return True
+    # ──────────────────────────────────────────────────────────────
+    #  CATEGORÍAS
+    #  Devuelve lista de nombres activos para los chips de filtro
+    # ──────────────────────────────────────────────────────────────
+    def get_categories(self):
+        if not self._ensure_connection():
+            return ["Quesos", "Carnes Frías", "Vinos", "Panadería", "Dulces", "Aceites"]
         try:
             cur = self.conn.cursor()
             cur.execute("""
-                UPDATE products
-                SET stock = GREATEST(0, stock + %s)
-                WHERE id = %s
-                RETURNING stock
-            """, (delta, product_id))
-            result = cur.fetchone()
+                SELECT DISTINCT c.nombre
+                FROM categorias c
+                JOIN productos p ON p.categoria_id = c.id
+                WHERE c.activo = TRUE AND p.activo = TRUE
+                ORDER BY c.nombre
+            """)
+            return [row[0] for row in cur.fetchall()]
+        except Exception as e:
+            print(f"[DB] get_categories error: {e}")
+            return []
+
+    # ──────────────────────────────────────────────────────────────
+    #  REGISTRAR VENTA
+    #  Usa la función stored registrar_venta() del esquema, que:
+    #    1. Crea el registro en ventas
+    #    2. Inserta detalle_venta por cada producto
+    #    3. Descuenta stock en productos
+    #    4. Registra movimientos_inventario
+    #  Todo en una transacción atómica con bloqueo de filas.
+    # ──────────────────────────────────────────────────────────────
+    def save_sale(self, folio, cart, total, subtotal, tax, payment,
+                  cashier, location, usuario_id=None):
+        """
+        Parámetros:
+          folio       — str  ej. "CAJA-000042"
+          cart        — list de dicts con claves: product, qty, subtotal
+          total       — float total incluyendo IVA
+          subtotal    — float sin IVA
+          tax         — float IVA
+          payment     — str "efectivo" | "tarjeta" | "transferencia"
+          cashier     — str nombre del cajero
+          location    — str nombre de la sucursal
+          usuario_id  — int ID del usuario en tabla usuarios (puede ser None)
+
+        Retorna: (venta_id: int | None, error: str | None)
+        """
+        if not self._ensure_connection():
+            print("[DB] Sin conexión — venta guardada solo localmente")
+            return None, "sin_conexion"
+
+        # Construir el JSON de items para la función stored
+        import json
+        items_json = json.dumps([
+            {
+                "producto_id":    item["product"]["id"],
+                "cantidad":       item["qty"],
+                "precio_unitario": float(item["product"]["precio_venta"])
+            }
+            for item in cart
+        ])
+
+        # Resolver usuario_id: si no viene, buscar el cajero en la tabla usuarios
+        uid = usuario_id
+        if uid is None:
+            uid = self._get_or_create_user_id(cashier)
+
+        try:
+            cur = self.conn.cursor()
+
+            # ── Llamar a la función stored del esquema ──────────
+            cur.execute("""
+                SELECT registrar_venta(%s, %s, %s, %s, %s::jsonb)
+            """, (folio, "caja", uid, payment, items_json))
+
+            venta_id = cur.fetchone()[0]
             self.conn.commit()
-            return result is not None
+            print(f"[DB] Venta registrada — folio: {folio}, id: {venta_id}")
+            return venta_id, None
+
+        except psycopg2.errors.RaiseException as e:
+            # Errores de negocio lanzados por la función (stock insuficiente, etc.)
+            try: self.conn.rollback()
+            except: pass
+            msg = str(e).split("\n")[0]
+            print(f"[DB] Error de negocio en registrar_venta: {msg}")
+            return None, msg
+
+        except Exception as e:
+            try: self.conn.rollback()
+            except: pass
+            print(f"[DB] save_sale error inesperado: {e}")
+            return None, str(e)
+
+    def _get_or_create_user_id(self, display_name):
+        """
+        Intenta encontrar en la tabla usuarios el id que corresponde
+        al cajero activo. Si no lo encuentra, usa el usuario cajero por defecto.
+        Nunca falla — devuelve None si no puede resolver.
+        """
+        try:
+            cur = self.conn.cursor()
+            # Buscar por nombre de display
+            cur.execute("""
+                SELECT id FROM usuarios
+                WHERE nombre = %s AND activo = TRUE
+                LIMIT 1
+            """, (display_name,))
+            row = cur.fetchone()
+            if row:
+                return row[0]
+            # Fallback: primer cajero activo
+            cur.execute("""
+                SELECT id FROM usuarios
+                WHERE rol = 'cajero' AND activo = TRUE
+                ORDER BY id LIMIT 1
+            """)
+            row = cur.fetchone()
+            return row[0] if row else None
+        except:
+            return None
+
+    # ──────────────────────────────────────────────────────────────
+    #  UPDATE STOCK MANUAL (ajuste directo, fuera de una venta)
+    #  Solo para correcciones manuales; las ventas ya descuentan stock
+    #  a través de registrar_venta().
+    # ──────────────────────────────────────────────────────────────
+    def update_stock(self, product_id, delta, usuario_id=None, motivo="Ajuste manual"):
+        """
+        Ajusta el stock y registra el movimiento en movimientos_inventario.
+        delta negativo = salida, positivo = entrada.
+        """
+        if not self._ensure_connection():
+            for p in MOCK_PRODUCTS:
+                if p["id"] == product_id:
+                    p["stock_actual"] = max(0, p["stock_actual"] + delta)
+            return True
+        try:
+            cur = self.conn.cursor()
+
+            # Leer stock actual con bloqueo
+            cur.execute("""
+                SELECT stock_actual FROM productos
+                WHERE id = %s FOR UPDATE
+            """, (product_id,))
+            row = cur.fetchone()
+            if not row:
+                self.conn.rollback()
+                return False
+
+            stock_antes  = row[0]
+            stock_despues = max(0, stock_antes + delta)
+
+            # Actualizar stock
+            cur.execute("""
+                UPDATE productos
+                SET stock_actual = %s
+                WHERE id = %s
+            """, (stock_despues, product_id))
+
+            # Registrar movimiento
+            cur.execute("""
+                INSERT INTO movimientos_inventario
+                    (producto_id, usuario_id, tipo, cantidad,
+                     stock_antes, stock_despues, motivo)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (product_id, usuario_id, "ajuste", delta,
+                  stock_antes, stock_despues, motivo))
+
+            self.conn.commit()
+            return True
         except Exception as e:
             print(f"[DB] update_stock error: {e}")
             try: self.conn.rollback()
             except: pass
             return False
 
-    def get_stock(self, product_id):
-        if not self.connected:
-            p = next((x for x in MOCK_PRODUCTS if x["id"] == product_id), None)
-            return p["stock"] if p else 0
-        try:
-            cur = self.conn.cursor()
-            cur.execute("SELECT stock FROM products WHERE id=%s", (product_id,))
-            row = cur.fetchone()
-            return row[0] if row else 0
-        except:
-            return 0
-
-    def save_sale(self, folio, cart, total, subtotal, tax, payment, cashier, location):
-        if not self.connected:
-            return True
-        try:
-            cur = self.conn.cursor()
-            cur.execute("""
-                INSERT INTO sales (folio, total, subtotal, tax, payment, cashier, location)
-                VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id
-            """, (folio, total, subtotal, tax, payment, cashier, location))
-            sale_id = cur.fetchone()[0]
-            for item in cart:
-                cur.execute("""
-                    INSERT INTO sale_items (sale_id, product_id, product_name, qty, unit_price, subtotal)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, (sale_id, item["product"]["id"], item["product"]["name"],
-                      item["qty"], item["product"]["price"], item["subtotal"]))
-            self.conn.commit()
-            return True
-        except Exception as e:
-            print(f"[DB] save_sale error: {e}")
-            try: self.conn.rollback()
-            except: pass
-            return False
-
+    # ──────────────────────────────────────────────────────────────
+    #  VENTAS DEL DÍA (para historial / reporte rápido)
+    # ──────────────────────────────────────────────────────────────
     def get_today_sales(self):
-        if not self.connected:
+        if not self._ensure_connection():
             return []
         try:
             cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             cur.execute("""
-                SELECT * FROM sales
-                WHERE created_at::date = CURRENT_DATE
-                ORDER BY created_at DESC LIMIT 50
+                SELECT
+                    v.id,
+                    v.folio,
+                    v.canal,
+                    v.total,
+                    v.subtotal,
+                    v.metodo_pago  AS payment,
+                    u.nombre       AS cashier,
+                    v.created_at
+                FROM ventas v
+                LEFT JOIN usuarios u ON u.id = v.usuario_id
+                WHERE v.estado = 'completada'
+                  AND v.created_at::date = CURRENT_DATE
+                ORDER BY v.created_at DESC
+                LIMIT 50
             """)
             return [dict(r) for r in cur.fetchall()]
-        except:
+        except Exception as e:
+            print(f"[DB] get_today_sales error: {e}")
             return []
 
     def close(self):
@@ -300,17 +478,8 @@ class DBManager:
 #  ZEBRA TC52 — BARCODE SCANNER HANDLER (HID / Keyboard Wedge)
 # ════════════════════════════════════════════════════════════════
 class BarcodeScanner:
-    """
-    El Zebra TC52 en modo HID (teclado) envía el código como
-    secuencia de teclas seguida de un Enter.
-    Este handler captura esa secuencia en cualquier momento,
-    sin importar qué widget tenga el foco.
-
-    En un futuro se puede cambiar a modo Serial/BT para integración
-    más robusta con la caja física.
-    """
-    TIMEOUT_MS = 120   # ms entre pulsaciones para considerar "escáner" vs "humano"
-    MIN_LENGTH  = 4    # longitud mínima para tratar como código de barras
+    TIMEOUT_MS = 120
+    MIN_LENGTH  = 4
 
     def __init__(self, root, callback):
         self.root     = root
@@ -322,7 +491,6 @@ class BarcodeScanner:
     def _on_key(self, event):
         now = time.time() * 1000
 
-        # Si hay mucho tiempo entre teclas, resetear buffer
         if now - self._last_t > self.TIMEOUT_MS and self._buffer:
             self._buffer = []
 
@@ -337,9 +505,8 @@ class BarcodeScanner:
         elif char and char.isprintable():
             self._buffer.append(char)
         else:
-            # Tecla especial (Shift, Ctrl, etc.) que no aporta caracter → limpiar
             if event.keysym not in ("Shift_L", "Shift_R", "Caps_Lock"):
-                pass  # no limpiar por Shift solo
+                pass
 
 
 # ════════════════════════════════════════════════════════════════
@@ -412,7 +579,16 @@ class CajaApp(tk.Tk):
 
         # DB
         self.db = DBManager()
-        self._db_status = "🟢 Conectado a Neon" if self.db.connected else "🟡 Modo offline (mock)"
+        self._db_status = "🟢 Neon conectado" if self.db.connected else "🟡 Modo offline"
+
+        # Cargar categorías dinámicamente desde la BD
+        self._categories = ["Todos"] + self.db.get_categories()
+        if len(self._categories) <= 1:
+            # fallback si la BD no tiene datos aún
+            self._categories = [
+                "Todos", "Abarrotes", "Bebidas", "Lácteos",
+                "Limpieza", "Botanas", "Panadería", "Carnes frías", "Higiene"
+            ]
 
         self._build_ui()
         self._load_products()
@@ -422,17 +598,12 @@ class CajaApp(tk.Tk):
         self.scanner = BarcodeScanner(self, self._on_barcode_scanned)
 
     # ──────────────────────────────────────────────────────────────
-    #  ZEBRA TC52 — callback cuando se escanea un código
+    #  ZEBRA TC52 — callback cuando se escanea un código de barras
     # ──────────────────────────────────────────────────────────────
     def _on_barcode_scanned(self, code):
-        """
-        Se llama con el código leído por el Zebra TC52 (o cualquier
-        escáner HID). Busca el producto por SKU y lo agrega al ticket.
-        """
-        product = self.db.get_product_by_sku(code)
+        product = self.db.get_product_by_barcode(code)
         if product:
             self._add_to_cart(product)
-            # Vibración visual en el entry de búsqueda
             self.entry_search.config(bg="#E8F4ED")
             self.after(300, lambda: self.entry_search.config(bg=C["surface"]))
         else:
@@ -562,17 +733,20 @@ class CajaApp(tk.Tk):
         scan_icon.pack(side="left", padx=(8, 0))
         scan_icon.bind("<Button-1>", lambda e: self._focus_scan_mode())
 
-        # Chips de categorías
+        # Chips de categorías (dinámicos desde la BD)
         cat_frame = tk.Frame(parent, bg=C["bg"])
         cat_frame.pack(fill="x", padx=20, pady=(0, 12))
 
         self.cat_buttons = {}
-        for cat in CATEGORIES:
-            cat_icons = {
-                "Todos": "", "Quesos": "🧀", "Carnes Frías": "🥩",
-                "Vinos": "🍷", "Panadería": "🥖", "Dulces": "🍬", "Aceites": "🫒"
-            }
-            icon = cat_icons.get(cat, "")
+        cat_icons = {
+            "Todos": "", "Abarrotes": "🌾", "Bebidas": "🥤", "Lácteos": "🥛",
+            "Limpieza": "🧹", "Botanas": "🍿", "Panadería": "🥖",
+            "Carnes frías": "🥩", "Higiene": "🧼", "Otros": "📦",
+            # Para datos mock:
+            "Quesos": "🧀", "Vinos": "🍷", "Dulces": "🍬", "Aceites": "🫒",
+        }
+        for cat in self._categories:
+            icon  = cat_icons.get(cat, "")
             label = f"{icon} {cat}".strip() if icon else cat
             btn = tk.Label(cat_frame, text=label, font=ff(9, "bold"),
                            padx=12, pady=6, cursor="hand2", relief="flat")
@@ -603,7 +777,6 @@ class CajaApp(tk.Tk):
         self.prod_canvas.bind_all("<MouseWheel>", self._on_mousewheel)
 
     def _focus_scan_mode(self):
-        """Modo rápido: limpia búsqueda y enfoca para escanear."""
         self.search_var.set("")
         self.entry_search.focus_set()
         Toast(self, "Modo escáner activo", "success", 1200)
@@ -651,8 +824,13 @@ class CajaApp(tk.Tk):
             self.prod_inner.columnconfigure(c, weight=1, uniform="col")
 
     def _make_card(self, p, row, col):
-        is_out = p["stock"] <= 0
-        is_low = 0 < p["stock"] <= 3
+        # Soporta tanto campo 'stock_actual' (BD real) como 'stock_actual' (mock)
+        stock    = p.get("stock_actual", p.get("stock_actual", 0))
+        is_out   = stock <= 0
+        is_low   = 0 < stock <= p.get("stock_minimo", 5)
+        # emoji: puede ser un emoji directo o una URL de imagen
+        raw_emoji = p.get("emoji", p.get("imagen_url", "📦"))
+        emoji     = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
 
         card = tk.Frame(
             self.prod_inner,
@@ -669,8 +847,7 @@ class CajaApp(tk.Tk):
         badge_row = tk.Frame(inner, bg=C["surface"])
         badge_row.pack(fill="x")
 
-        emoji_lbl = tk.Label(badge_row, text=p.get("emoji", "📦"),
-                             font=ff(22), bg=C["surface"])
+        emoji_lbl = tk.Label(badge_row, text=emoji, font=ff(22), bg=C["surface"])
         emoji_lbl.pack(side="left")
 
         if is_out:
@@ -678,18 +855,20 @@ class CajaApp(tk.Tk):
                              bg=C["chip_red"], fg=C["red"], padx=6, pady=2)
             badge.pack(side="right", anchor="n")
         elif is_low:
-            badge = tk.Label(badge_row, text=f"Quedan {p['stock']}", font=ff(7, "bold"),
+            badge = tk.Label(badge_row, text=f"Quedan {stock}", font=ff(7, "bold"),
                              bg=C["chip_amber"], fg=C["amber"], padx=6, pady=2)
             badge.pack(side="right", anchor="n")
         else:
-            badge = tk.Label(badge_row, text=f"{p['stock']} disp.", font=ff(7),
+            badge = tk.Label(badge_row, text=f"{stock} disp.", font=ff(7),
                              bg=C["surface"], fg=C["text3"])
             badge.pack(side="right", anchor="n")
 
-        tk.Label(inner, text=p.get("sku", ""), font=fm(8),
+        # SKU / código de barras
+        sku_text = p.get("codigo_barras", "")
+        tk.Label(inner, text=sku_text or "", font=fm(8),
                  bg=C["surface"], fg=C["text3"], anchor="w").pack(fill="x", pady=(6, 0))
 
-        name_lbl = tk.Label(inner, text=p["name"], font=ff(10, "bold"),
+        name_lbl = tk.Label(inner, text=p["nombre"], font=ff(10, "bold"),
                             bg=C["surface"], fg=C["text"] if not is_out else C["text3"],
                             anchor="w", wraplength=160, justify="left")
         name_lbl.pack(fill="x")
@@ -697,13 +876,16 @@ class CajaApp(tk.Tk):
         price_frame = tk.Frame(inner, bg=C["surface"])
         price_frame.pack(fill="x", pady=(8, 0))
 
-        price_lbl = tk.Label(price_frame, text=f"${p['price']:,.2f}",
+        price = float(p.get("precio_venta", p.get("precio_venta", 0)))
+        price_lbl = tk.Label(price_frame, text=f"${price:,.2f}",
                              font=ff(13, "bold"), bg=C["surface"],
                              fg=C["green"] if not is_out else C["text3"])
         price_lbl.pack(side="left")
 
-        tk.Label(price_frame, text=f"/{p.get('unit','pza')}", font=ff(8),
-                 bg=C["surface"], fg=C["text3"]).pack(side="left", padx=(2, 0), pady=(3, 0))
+        # Categoría como sub-etiqueta
+        cat_text = p.get("categoria", "")
+        tk.Label(price_frame, text=cat_text, font=ff(7),
+                 bg=C["surface"], fg=C["text3"]).pack(side="right", pady=(3, 0))
 
         def on_enter(e, c=card):
             if not is_out:
@@ -723,14 +905,12 @@ class CajaApp(tk.Tk):
 
     # ────────────────────────────────────────────────────────────
     #  TICKET (panel derecho)
-    #  Layout con grid en el parent para control total de alturas
     # ────────────────────────────────────────────────────────────
     def _build_ticket(self, parent):
-        # Usamos grid en parent para dividir: header | carrito | pie
-        parent.grid_rowconfigure(1, weight=1)   # fila del carrito se expande
+        parent.grid_rowconfigure(1, weight=1)
         parent.grid_columnconfigure(0, weight=1)
 
-        # ── Fila 0: Header ────────────────────────────────────
+        # Fila 0: Header
         t_header = tk.Frame(parent, bg=C["surface"])
         t_header.grid(row=0, column=0, sticky="ew", padx=20, pady=(16, 0))
 
@@ -748,11 +928,10 @@ class CajaApp(tk.Tk):
                                          padx=8, pady=3)
         self.lbl_items_count.pack(side="right")
 
-        # Separador bajo header
         tk.Frame(parent, bg=C["border"], height=1).grid(row=0, column=0, sticky="ews",
                                                          padx=0, pady=(48, 0))
 
-        # ── Fila 1: Carrito scrollable ─────────────────────────
+        # Fila 1: Carrito scrollable
         cart_wrap = tk.Frame(parent, bg=C["surface"])
         cart_wrap.grid(row=1, column=0, sticky="nsew")
 
@@ -771,14 +950,12 @@ class CajaApp(tk.Tk):
         self.cart_canvas.bind("<Configure>", lambda e: self.cart_canvas.itemconfig(
             self._cart_window, width=e.width))
 
-        # ── Fila 2: Pie (totales + pago + cobrar) ─────────────
+        # Fila 2: Pie (totales + pago + cobrar)
         pie = tk.Frame(parent, bg=C["surface"])
         pie.grid(row=2, column=0, sticky="ew")
 
-        # Separador superior del pie
         tk.Frame(pie, bg=C["border"], height=1).pack(fill="x")
 
-        # Subtotal / IVA / TOTAL
         totals_inner = tk.Frame(pie, bg=C["surface"], padx=20, pady=12)
         totals_inner.pack(fill="x")
 
@@ -912,21 +1089,25 @@ class CajaApp(tk.Tk):
             r1 = tk.Frame(item_frame, bg=C["surface"])
             r1.pack(fill="x")
 
-            tk.Label(r1, text=p.get("emoji", "📦"), font=ff(14),
-                     bg=C["surface"]).pack(side="left", padx=(0, 8))
+            raw_emoji = p.get("emoji", p.get("imagen_url", "📦"))
+            emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
+            tk.Label(r1, text=emoji, font=ff(14), bg=C["surface"]).pack(side="left", padx=(0, 8))
 
             info = tk.Frame(r1, bg=C["surface"])
             info.pack(side="left", fill="x", expand=True)
 
-            name_truncated = p["name"][:22] + "…" if len(p["name"]) > 22 else p["name"]
+            nombre = p.get("nombre", p.get("nombre", ""))
+            name_truncated = nombre[:22] + "…" if len(nombre) > 22 else nombre
             tk.Label(info, text=name_truncated, font=ff(9, "bold"),
                      bg=C["surface"], fg=C["text"], anchor="w").pack(fill="x")
 
+            price = float(p.get("precio_venta", 0))
+            sku   = p.get("codigo_barras", "")
             price_row = tk.Frame(info, bg=C["surface"])
             price_row.pack(fill="x")
-            tk.Label(price_row, text=f"${p['price']:,.2f}", font=fm(8),
+            tk.Label(price_row, text=f"${price:,.2f}", font=fm(8),
                      bg=C["surface"], fg=C["text2"]).pack(side="left")
-            tk.Label(price_row, text=f"c/u · {p.get('sku','')}", font=ff(7),
+            tk.Label(price_row, text=f"c/u · {sku}", font=ff(7),
                      bg=C["surface"], fg=C["text3"]).pack(side="left", padx=4)
 
             tk.Label(r1, text=f"${item['subtotal']:,.2f}",
@@ -990,7 +1171,7 @@ class CajaApp(tk.Tk):
     def _add_to_cart(self, product):
         stock_actual = self.db.get_stock(product["id"])
         if stock_actual <= 0:
-            Toast(self, f"{product['name']} está agotado", "error")
+            Toast(self, f"{product['nombre']} está agotado", "error")
             return
 
         existing = next((i for i in self.cart if i["product"]["id"] == product["id"]), None)
@@ -999,17 +1180,17 @@ class CajaApp(tk.Tk):
                 Toast(self, f"Solo hay {stock_actual} disponibles", "warning")
                 return
             existing["qty"] += 1
-            existing["subtotal"] = float(existing["qty"]) * float(existing["product"]["price"])
+            existing["subtotal"] = float(existing["qty"]) * float(existing["product"]["precio_venta"])
         else:
             self.cart.append({
                 "product": product,
                 "qty": 1,
-                "subtotal": float(product["price"])
+                "subtotal": float(product["precio_venta"])
             })
 
         self._render_cart()
         self._update_totals()
-        Toast(self, f"+ {product['name']}", "success", 1200)
+        Toast(self, f"+ {product['nombre']}", "success", 1200)
 
     def _change_qty(self, idx, delta):
         item = self.cart[idx]
@@ -1022,12 +1203,12 @@ class CajaApp(tk.Tk):
             Toast(self, f"Solo hay {stock_actual} disponibles", "warning")
             return
         item["qty"] = new_qty
-        item["subtotal"] = float(new_qty) * float(item["product"]["price"])
+        item["subtotal"] = float(new_qty) * float(item["product"]["precio_venta"])
         self._render_cart()
         self._update_totals()
 
     def _remove_item(self, idx):
-        name = self.cart[idx]["product"]["name"]
+        name = self.cart[idx]["product"]["nombre"]
         self.cart.pop(idx)
         self._render_cart()
         self._update_totals()
@@ -1055,28 +1236,35 @@ class CajaApp(tk.Tk):
         payment  = self.pay_var.get()
 
         FOLIO_COUNTER[0] += 1
-        folio = f"#{FOLIO_COUNTER[0]}"
+        folio = f"CAJA-{FOLIO_COUNTER[0]:06d}"
 
         # Snapshot antes de limpiar
         cart_snapshot = [dict(i) for i in self.cart]
 
-        # Descontar stock
-        for item in self.cart:
-            self.db.update_stock(item["product"]["id"], -item["qty"])
-
-        # Guardar en BD
-        self.db.save_sale(
+        # ── Guardar en BD (usa registrar_venta() — atómico) ─────
+        venta_id, error = self.db.save_sale(
             folio, self.cart, total, subtotal, tax,
-            payment, self.user["name"], self.location["name"]
+            payment, self.user["name"], self.location["name"],
+            usuario_id=self.user.get("id") if isinstance(self.user.get("id"), int) else None
         )
 
-        # ── Limpiar ticket INMEDIATAMENTE ──────────────────────
+        if error and error != "sin_conexion":
+            # Error de negocio (stock insuficiente, producto no encontrado, etc.)
+            messagebox.showerror(
+                "Error en la venta",
+                f"No se pudo completar la venta:\n{error}"
+            )
+            # Revertir el folio y no limpiar el carrito
+            FOLIO_COUNTER[0] -= 1
+            return
+
+        # ── Limpiar ticket ───────────────────────────────────────
         self.cart.clear()
         self._render_cart()
         self._update_totals()
-        self._load_products()
+        self._load_products()   # refresca stock en pantalla
 
-        # Mostrar modal según pago
+        # ── Mostrar modal de cobro ───────────────────────────────
         if payment == "tarjeta":
             self._show_card_modal(folio, total, subtotal, tax, cart_snapshot)
         else:
@@ -1090,7 +1278,7 @@ class CajaApp(tk.Tk):
         self.entry_search.focus_set()
 
     # ════════════════════════════════════════════════════════════
-    #  MODAL EFECTIVO — con calculadora de cambio
+    #  MODAL EFECTIVO
     # ════════════════════════════════════════════════════════════
     def _show_cash_modal(self, folio, total, subtotal, tax, cart_snapshot):
         dlg = tk.Toplevel(self)
@@ -1105,7 +1293,6 @@ class CajaApp(tk.Tk):
         y = self.winfo_y() + (self.winfo_height() - h) // 2
         dlg.geometry(f"{w}x{h}+{x}+{y}")
 
-        # ── Header verde ─────────────────────────────────────
         hdr = tk.Frame(dlg, bg=C["green"], pady=20)
         hdr.pack(fill="x")
         tk.Label(hdr, text="💵", font=ff(32), bg=C["green"]).pack()
@@ -1117,19 +1304,20 @@ class CajaApp(tk.Tk):
         body = tk.Frame(dlg, bg=C["surface"])
         body.pack(fill="both", expand=True, padx=28, pady=16)
 
-        # ── Resumen artículos ─────────────────────────────────
         items_bg = tk.Frame(body, bg=C["bg2"], pady=2)
         items_bg.pack(fill="x", pady=(0, 12))
         for item in cart_snapshot:
             r = tk.Frame(items_bg, bg=C["bg2"])
             r.pack(fill="x", padx=12, pady=2)
-            name = f"{item['product'].get('emoji','')} {item['product']['name']} ×{item['qty']}"
+            nombre = item["product"].get("nombre", "")
+            raw_emoji = item["product"].get("emoji", "📦")
+            emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
+            name = f"{emoji} {nombre} ×{item['qty']}"
             tk.Label(r, text=name, font=ff(9), bg=C["bg2"],
                      fg=C["text"], anchor="w").pack(side="left")
             tk.Label(r, text=f"${item['subtotal']:,.2f}", font=fm(9),
                      bg=C["bg2"], fg=C["text"]).pack(side="right")
 
-        # ── Totales ───────────────────────────────────────────
         t_row = tk.Frame(body, bg=C["surface"])
         t_row.pack(fill="x")
         for lbl, val in [("Subtotal", f"${subtotal:,.2f}"), ("IVA 16%", f"${tax:,.2f}")]:
@@ -1147,18 +1335,14 @@ class CajaApp(tk.Tk):
 
         tk.Frame(body, bg=C["border"], height=1).pack(fill="x", pady=10)
 
-        # ── Campo "Con cuánto paga" ────────────────────────────
         tk.Label(body, text="Con cuánto paga el cliente:", font=ff(9, "bold"),
                  bg=C["surface"], fg=C["text2"]).pack(anchor="w")
 
         cash_wrap = tk.Frame(body, bg=C["surface"],
                              highlightthickness=2, highlightbackground=C["green_mid"])
         cash_wrap.pack(fill="x", pady=(4, 0))
-
-        # Prefijo $
         tk.Label(cash_wrap, text="$", font=fm(16, "bold"),
                  bg=C["surface"], fg=C["text2"], padx=8).pack(side="left")
-
         cash_var = tk.StringVar()
         entry_cash = tk.Entry(cash_wrap, textvariable=cash_var,
                               font=fm(16, "bold"), bg=C["surface"],
@@ -1167,7 +1351,6 @@ class CajaApp(tk.Tk):
         entry_cash.pack(side="left", fill="x", expand=True, pady=12, padx=(0, 12))
         entry_cash.focus_set()
 
-        # ── Cambio ────────────────────────────────────────────
         change_frame = tk.Frame(body, bg=C["surface"])
         change_frame.pack(fill="x", pady=6)
         tk.Label(change_frame, text="Cambio:", font=ff(11, "bold"),
@@ -1176,7 +1359,6 @@ class CajaApp(tk.Tk):
                               bg=C["surface"], fg=C["text3"])
         lbl_change.pack(side="right")
 
-        # ── Accesos rápidos (billetes) ─────────────────────────
         quick_frame = tk.Frame(body, bg=C["surface"])
         quick_frame.pack(fill="x", pady=(4, 10))
         tk.Label(quick_frame, text="Rápidos:", font=ff(8),
@@ -1186,7 +1368,6 @@ class CajaApp(tk.Tk):
             cash_var.set(f"{amt:.0f}")
             _recalc()
 
-        # Calcular sugerencias de cambio
         suggestions = []
         for bill in [20, 50, 100, 200, 500, 1000]:
             if bill >= total:
@@ -1203,7 +1384,6 @@ class CajaApp(tk.Tk):
             b.pack(side="left", padx=2)
             b.bind("<Button-1>", lambda e, a=amt: set_amount(a))
 
-        # ── Recalcular cambio al escribir ─────────────────────
         def _recalc(*args):
             try:
                 paid = float(cash_var.get().replace(",", ""))
@@ -1221,7 +1401,6 @@ class CajaApp(tk.Tk):
         cash_var.trace_add("write", _recalc)
         entry_cash.bind("<Return>", lambda e: _confirm_cash())
 
-        # ── Botón confirmar ───────────────────────────────────
         def _confirm_cash():
             try:
                 paid = float(cash_var.get().replace(",", ""))
@@ -1229,7 +1408,6 @@ class CajaApp(tk.Tk):
                     return
             except:
                 return
-
             cambio_val = paid - total
             dlg.destroy()
             self._show_cash_success(folio, total, subtotal, tax,
@@ -1245,8 +1423,7 @@ class CajaApp(tk.Tk):
         btn_confirm.pack(fill="x", ipady=13, pady=(6, 4))
 
         btn_cancel = tk.Button(body, text="Cancelar",
-                               font=ff(9),
-                               bg=C["surface"], fg=C["text3"],
+                               font=ff(9), bg=C["surface"], fg=C["text3"],
                                activebackground=C["bg2"],
                                relief="flat", bd=0, cursor="hand2",
                                command=lambda: [dlg.destroy(), self._reset_for_new_sale()])
@@ -1255,7 +1432,7 @@ class CajaApp(tk.Tk):
         dlg.bind("<Escape>", lambda e: [dlg.destroy(), self._reset_for_new_sale()])
 
     # ════════════════════════════════════════════════════════════
-    #  MODAL ÉXITO EFECTIVO — muestra cambio y cierra
+    #  MODAL ÉXITO EFECTIVO
     # ════════════════════════════════════════════════════════════
     def _show_cash_success(self, folio, total, subtotal, tax,
                            cart_snapshot, paid, cambio):
@@ -1271,13 +1448,11 @@ class CajaApp(tk.Tk):
         y = self.winfo_y() + (self.winfo_height() - h) // 2
         dlg.geometry(f"{w}x{h}+{x}+{y}")
 
-        # ── Header ────────────────────────────────────────────
         hdr = tk.Frame(dlg, bg=C["surface"])
         hdr.pack(fill="x", padx=24, pady=16)
         tk.Label(hdr, text="¡Listo!", font=ff(18, "bold"),
                  bg=C["surface"], fg=C["text"]).pack(side="left")
 
-        # ── Ícono check ───────────────────────────────────────
         chk_bg = tk.Frame(dlg, bg=C["green_pale"], width=72, height=72)
         chk_bg.pack()
         chk_bg.pack_propagate(False)
@@ -1290,7 +1465,6 @@ class CajaApp(tk.Tk):
                  text=f"Ticket {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}",
                  font=ff(8), bg=C["surface"], fg=C["text3"]).pack()
 
-        # ── CAMBIO grande ─────────────────────────────────────
         cambio_frame = tk.Frame(dlg, bg=C["green_pale"], pady=14)
         cambio_frame.pack(fill="x", padx=24, pady=12)
         tk.Label(cambio_frame, text="CAMBIO", font=ff(10, "bold"),
@@ -1301,7 +1475,6 @@ class CajaApp(tk.Tk):
                  text=f"  Recibido: ${paid:,.2f}  ·  Total: ${total:,.2f}  ",
                  font=ff(8), bg=C["green_pale"], fg=C["green_mid"]).pack()
 
-        # ── Items ─────────────────────────────────────────────
         items_bg = tk.Frame(dlg, bg=C["bg2"])
         items_bg.pack(fill="x", padx=24, pady=(0, 8))
         items_inner = tk.Frame(items_bg, bg=C["bg2"], padx=12, pady=8)
@@ -1309,13 +1482,15 @@ class CajaApp(tk.Tk):
         for item in cart_snapshot:
             r = tk.Frame(items_inner, bg=C["bg2"])
             r.pack(fill="x", pady=1)
-            name = f"{item['product'].get('emoji','')} {item['product']['name']} ×{item['qty']}"
+            raw_emoji = item["product"].get("emoji", "📦")
+            emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
+            nombre = item["product"].get("nombre", "")
+            name = f"{emoji} {nombre} ×{item['qty']}"
             tk.Label(r, text=name, font=ff(9), bg=C["bg2"],
                      fg=C["text"], anchor="w").pack(side="left")
             tk.Label(r, text=f"${item['subtotal']:,.2f}", font=fm(9),
                      bg=C["bg2"], fg=C["text"]).pack(side="right")
 
-        # ── Botones imprimir / enviar ──────────────────────────
         btn_row = tk.Frame(dlg, bg=C["surface"])
         btn_row.pack(fill="x", padx=24, pady=(0, 4))
         tk.Button(btn_row, text="🖨  Imprimir", font=ff(9),
@@ -1341,26 +1516,13 @@ class CajaApp(tk.Tk):
 
         dlg.bind("<Return>", lambda e: close_and_reset())
         dlg.bind("<Escape>", lambda e: close_and_reset())
-
-        # Auto-close después de 30s
         dlg.after(30000, lambda: (dlg.destroy(), self._reset_for_new_sale())
                   if dlg.winfo_exists() else None)
 
     # ════════════════════════════════════════════════════════════
-    #  MODAL TARJETA — Pointer / terminal bancaria
+    #  MODAL TARJETA
     # ════════════════════════════════════════════════════════════
     def _show_card_modal(self, folio, total, subtotal, tax, cart_snapshot):
-        """
-        Modal para pago con tarjeta.
-        Preparado para integración futura con Pointer u otro terminal bancario.
-
-        TODO (integración futura):
-          - Conectar via API REST / SDK Pointer al terminal físico
-          - Enviar monto: POST /api/terminal/charge { amount: total, reference: folio }
-          - Escuchar respuesta: aprobado / rechazado / timeout
-          - Actualizar estado en pantalla en tiempo real
-          - Manejar errores: sin conexión, tarjeta rechazada, etc.
-        """
         dlg = tk.Toplevel(self)
         dlg.title("Cobro con Tarjeta")
         dlg.configure(bg=C["surface"])
@@ -1373,7 +1535,6 @@ class CajaApp(tk.Tk):
         y = self.winfo_y() + (self.winfo_height() - h) // 2
         dlg.geometry(f"{w}x{h}+{x}+{y}")
 
-        # ── Header azul/oscuro (distinto al de efectivo) ──────
         hdr = tk.Frame(dlg, bg="#1A2B4A", pady=20)
         hdr.pack(fill="x")
         tk.Label(hdr, text="💳", font=ff(32), bg="#1A2B4A").pack()
@@ -1386,7 +1547,6 @@ class CajaApp(tk.Tk):
         body = tk.Frame(dlg, bg=C["surface"])
         body.pack(fill="both", expand=True, padx=28, pady=16)
 
-        # ── Total ─────────────────────────────────────────────
         total_frame = tk.Frame(body, bg=C["surface"])
         total_frame.pack(pady=(0, 12))
         tk.Label(total_frame, text="Total a cobrar", font=ff(10),
@@ -1394,46 +1554,36 @@ class CajaApp(tk.Tk):
         tk.Label(total_frame, text=f"${total:,.2f}", font=fm(24, "bold"),
                  bg=C["surface"], fg="#1A2B4A").pack()
 
-        # ── Estado de la terminal ─────────────────────────────
         terminal_frame = tk.Frame(body, bg="#F0F4FA", pady=16)
         terminal_frame.pack(fill="x", pady=(0, 12))
-
-        # Ícono terminal (simulado — sustituir con ícono real del Pointer)
-        term_icon = tk.Label(terminal_frame, text="⬛", font=ff(28),
-                             bg="#F0F4FA", fg="#333")
-        term_icon.pack()
-
-        lbl_terminal_name = tk.Label(terminal_frame,
-                                      text="Pointer  ·  Terminal no conectada",
-                                      font=ff(9, "bold"),
-                                      bg="#F0F4FA", fg="#1A2B4A")
-        lbl_terminal_name.pack(pady=(6, 2))
-
+        tk.Label(terminal_frame, text="⬛", font=ff(28),
+                 bg="#F0F4FA", fg="#333").pack()
+        tk.Label(terminal_frame, text="Pointer  ·  Terminal no conectada",
+                 font=ff(9, "bold"), bg="#F0F4FA", fg="#1A2B4A").pack(pady=(6, 2))
         lbl_status = tk.Label(terminal_frame,
                                text="⚠  Integración pendiente — confirma manualmente",
-                               font=ff(8),
-                               bg="#F0F4FA", fg=C["amber"])
+                               font=ff(8), bg="#F0F4FA", fg=C["amber"])
         lbl_status.pack()
 
-        # Barra de progreso animada
         prog_outer = tk.Frame(body, bg=C["border"], height=4)
         prog_outer.pack(fill="x", pady=4)
         prog_bar = tk.Frame(prog_outer, bg="#1A2B4A", height=4, width=0)
         prog_bar.place(x=0, y=0, relheight=1)
 
-        # ── Items resumen ─────────────────────────────────────
         items_bg = tk.Frame(body, bg=C["bg2"], pady=2)
         items_bg.pack(fill="x", pady=(8, 0))
         for item in cart_snapshot:
             r = tk.Frame(items_bg, bg=C["bg2"])
             r.pack(fill="x", padx=12, pady=2)
-            name = f"{item['product'].get('emoji','')} {item['product']['name']} ×{item['qty']}"
+            raw_emoji = item["product"].get("emoji", "📦")
+            emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
+            nombre = item["product"].get("nombre", "")
+            name = f"{emoji} {nombre} ×{item['qty']}"
             tk.Label(r, text=name, font=ff(9), bg=C["bg2"],
                      fg=C["text"], anchor="w").pack(side="left")
             tk.Label(r, text=f"${item['subtotal']:,.2f}", font=fm(9),
                      bg=C["bg2"], fg=C["text"]).pack(side="right")
 
-        # ── Botón confirmar pago (manual hasta integrar Pointer) ──
         def _confirm_card():
             dlg.destroy()
             self._show_card_success(folio, total, subtotal, tax, cart_snapshot)
@@ -1447,14 +1597,12 @@ class CajaApp(tk.Tk):
         btn_confirm.pack(fill="x", ipady=13, pady=(12, 4))
 
         btn_cancel = tk.Button(body, text="Cancelar transacción",
-                               font=ff(9),
-                               bg=C["surface"], fg=C["text3"],
+                               font=ff(9), bg=C["surface"], fg=C["text3"],
                                activebackground=C["bg2"],
                                relief="flat", bd=0, cursor="hand2",
                                command=lambda: [dlg.destroy(), self._reset_for_new_sale()])
         btn_cancel.pack(fill="x", ipady=6)
 
-        # Animación barra
         def animate(step=0):
             try:
                 pct = min(step / 80, 1.0)
@@ -1487,7 +1635,6 @@ class CajaApp(tk.Tk):
         y = self.winfo_y() + (self.winfo_height() - h) // 2
         dlg.geometry(f"{w}x{h}+{x}+{y}")
 
-        # Header
         hdr = tk.Frame(dlg, bg=C["surface"])
         hdr.pack(fill="x", padx=24, pady=16)
         tk.Label(hdr, text="¡Listo!", font=ff(18, "bold"),
@@ -1505,7 +1652,6 @@ class CajaApp(tk.Tk):
                  text=f"Ticket {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}",
                  font=ff(8), bg=C["surface"], fg=C["text3"]).pack()
 
-        # Total
         total_f = tk.Frame(dlg, bg="#EEF2FF", pady=10)
         total_f.pack(fill="x", padx=24, pady=10)
         tk.Label(total_f, text=f"${total:,.2f}", font=fm(22, "bold"),
@@ -1513,7 +1659,6 @@ class CajaApp(tk.Tk):
         tk.Label(total_f, text="💳  Tarjeta", font=ff(9),
                  bg="#EEF2FF", fg="#4A6A9A").pack()
 
-        # Items
         items_bg = tk.Frame(dlg, bg=C["bg2"])
         items_bg.pack(fill="x", padx=24, pady=(0, 8))
         items_inner = tk.Frame(items_bg, bg=C["bg2"], padx=12, pady=8)
@@ -1521,7 +1666,10 @@ class CajaApp(tk.Tk):
         for item in cart_snapshot:
             r = tk.Frame(items_inner, bg=C["bg2"])
             r.pack(fill="x", pady=1)
-            name = f"{item['product'].get('emoji','')} {item['product']['name']} ×{item['qty']}"
+            raw_emoji = item["product"].get("emoji", "📦")
+            emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
+            nombre = item["product"].get("nombre", "")
+            name = f"{emoji} {nombre} ×{item['qty']}"
             tk.Label(r, text=name, font=ff(9), bg=C["bg2"],
                      fg=C["text"], anchor="w").pack(side="left")
             tk.Label(r, text=f"${item['subtotal']:,.2f}", font=fm(9),
@@ -1575,7 +1723,7 @@ class CajaApp(tk.Tk):
         if not q:
             return
         visible = self.db.get_products(q, self.active_category.get())
-        if len(visible) == 1 and visible[0]["stock"] > 0:
+        if len(visible) == 1 and visible[0].get("stock_actual", 0) > 0:
             self._add_to_cart(visible[0])
             self.search_var.set("")
 
@@ -1634,7 +1782,7 @@ class LoginWindow(tk.Tk):
 
         tk.Label(top_bg, text="La Casita", font=ff(18, "bold"),
                  bg=C["header"], fg=C["header_text"]).place(relx=0.5, rely=0.72, anchor="center")
-        tk.Label(top_bg, text="Caja",  font=ff(8),
+        tk.Label(top_bg, text="Caja", font=ff(8),
                  bg=C["header"], fg=C["header_dim"]).place(relx=0.5, rely=0.88, anchor="center")
 
         card = tk.Frame(self, bg=C["surface"], padx=36, pady=32)
@@ -1657,7 +1805,7 @@ class LoginWindow(tk.Tk):
                              lambda e: user_wrap.config(highlightbackground=C["green_mid"], highlightthickness=2))
         self.entry_user.bind("<FocusOut>",
                              lambda e: user_wrap.config(highlightbackground=C["border2"], highlightthickness=1))
-        self.entry_user.bind("<Return>",   lambda e: self.entry_pass.focus_set())
+        self.entry_user.bind("<Return>", lambda e: self.entry_pass.focus_set())
 
         tk.Label(card, text="Contraseña", font=ff(9, "bold"),
                  bg=C["surface"], fg=C["text2"]).pack(anchor="w")
@@ -1693,9 +1841,13 @@ class LoginWindow(tk.Tk):
         username = self.entry_user.get().strip().lower()
         password = self.entry_pass.get()
         if username in SYSTEM_USERS:
-            stored_pass, display_name = SYSTEM_USERS[username]
+            stored_pass, display_name, db_id = SYSTEM_USERS[username]
             if password == stored_pass:
-                self._logged_user = {"id": username, "name": display_name, "role": "cajero"}
+                self._logged_user = {
+                    "id":   db_id,      # puede ser None si no mapeado aún
+                    "name": display_name,
+                    "role": "cajero"
+                }
                 self.destroy()
                 return
         self.lbl_error.config(text="Usuario o contraseña incorrectos")
