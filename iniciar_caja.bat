@@ -1,10 +1,5 @@
 @echo off
-title La Casita — Punto de Venta
-color 0A
-echo.
-echo  ╔═══════════════════════════════════════════╗
-echo  ║   La Casita Delicatessen — Sistema de Caja ║
-echo  ╚═══════════════════════════════════════════╝
+title La Casita  Punto de Venta
 echo.
 
 python --version >nul 2>&1
