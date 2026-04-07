@@ -21,43 +21,60 @@ except ImportError:
 # ── Configuración de Base de Datos ──────────────────────────────
 DB_URL = "postgresql://neondb_owner:npg_M0gYeTvqAS6F@ep-rapid-wildflower-an0psjmg-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
-# ── PALETA LA CASITA ────────────────────────────────────────────
+# ── PALETA LA CASITA — Editorial Artisanship ────────────────────
 C = {
-    "bg":           "#F5F2ED",
-    "bg2":          "#EDEAE3",
-    "surface":      "#FFFFFF",
-    "surface2":     "#FAFAF8",
-    "border":       "#E2DDD5",
-    "border2":      "#CCC7BC",
-    "text":         "#1A1814",
-    "text2":        "#5C574E",
-    "text3":        "#9C978E",
-    "green":        "#1E4D35",
-    "green_hover":  "#2A6647",
-    "green_mid":    "#3A8560",
-    "green_light":  "#6DB88A",
-    "green_pale":   "#E8F4ED",
-    "green_tag":    "#D1EAD9",
-    "amber":        "#A0520A",
-    "amber_bg":     "#FEF3C7",
-    "amber_pale":   "#FFF8E7",
-    "red":          "#B91C1C",
-    "red_bg":       "#FEE2E2",
-    "red_pale":     "#FFF5F5",
-    "header":       "#162C20",
-    "header2":      "#1E3D2A",
-    "header_text":  "#E8F2EC",
-    "header_dim":   "#8AB89A",
-    "card_hover":   "#F0EDE7",
-    "chip_green":   "#D4EDDA",
-    "chip_red":     "#FFD6D6",
-    "chip_amber":   "#FFE9B3",
+    "bg":           "#fcf9f4",
+    "surface":      "#fcf9f4",
+    "surface_low":  "#f6f3ee",
+    "surface_high": "#ebe8e3",
+    "surface_highest": "#e5e2dd",
+    "surface_lowest": "#ffffff",
+    "on_surface":   "#1c1c19",
+    "on_surface_variant": "#414844",
+    "primary":      "#012d1d",
+    "primary_container": "#1b4332",
+    "on_primary":   "#ffffff",
+    "on_primary_container": "#86af99",
+    "secondary":    "#7b5819",
+    "secondary_container": "#fdcd83",
+    "on_secondary_container": "#785516",
+    "secondary_fixed": "#ffdeae",
+    "on_secondary_fixed": "#281900",
+    "outline_variant": "#c1c8c2",
+    "error":        "#ba1a1a",
+    "error_container": "#ffdad6",
+    # Mapeo de compatibilidad con código anterior
+    "text":         "#1c1c19",
+    "text2":        "#414844",
+    "text3":        "#717973",
+    "green":        "#012d1d",
+    "green_mid":    "#3f6653",
+    "green_light":  "#a5d0b9",
+    "green_pale":   "#f0ede8",
+    "amber":        "#7b5819",
+    "red":          "#ba1a1a",
+    "header":       "#012d1d",
+    "header2":      "#1b4332",
+    "header_text":  "#ffffff",
+    "header_dim":   "#86af99",
+    "border":       "#c1c8c2",
+    "border2":      "#717973",
+    "bg2":          "#f6f3ee",
+    "chip_green":   "#c1ecd4",
+    "chip_red":     "#ffdad6",
+    "chip_amber":   "#ffdeae",
 }
 
-F = "Segoe UI"
+F_SANS = "Plus Jakarta Sans"
+F_SERIF = "Newsreader"
 
 def ff(size=10, weight="normal"):
-    return (F, size, weight)
+    """Sans-serif font (Body/Label)"""
+    return (F_SANS, size, weight)
+
+def fh(size=10, weight="normal"):
+    """Serif font (Headline)"""
+    return (F_SERIF, size, weight)
 
 def fm(size=10, weight="normal"):
     return ("Consolas", size, weight)
@@ -604,8 +621,9 @@ class CajaApp(tk.Tk):
         product = self.db.get_product_by_barcode(code)
         if product:
             self._add_to_cart(product)
-            self.entry_search.config(bg="#E8F4ED")
-            self.after(300, lambda: self.entry_search.config(bg=C["surface"]))
+            # Use the new header search entry
+            self.hdr_search_entry.config(bg=C["green_light"])
+            self.after(300, lambda: self.hdr_search_entry.config(bg=C["primary_container"]))
         else:
             Toast(self, f"Código no encontrado: {code}", "error", 2500)
 
@@ -613,83 +631,139 @@ class CajaApp(tk.Tk):
     #  BUILD UI
     # ────────────────────────────────────────────────────────────
     def _build_ui(self):
-        self._build_header()
-        self._build_body()
+        # Layout principal: Sidebar (Izquierda) + Main (Centro + Derecha)
+        self._build_sidebar()
 
-    def _build_header(self):
-        hdr = tk.Frame(self, bg=C["header"], height=56)
+        self.main_container = tk.Frame(self, bg=C["bg"])
+        self.main_container.pack(side="left", fill="both", expand=True)
+
+        self._build_header(self.main_container)
+        self._build_body(self.main_container)
+
+    def _build_sidebar(self):
+        # Sidebar Izquierdo: Branding, Navegación y Perfil
+        side = tk.Frame(self, bg=C["surface_low"], width=240, padx=20, pady=24)
+        side.pack(side="left", fill="y")
+        side.pack_propagate(False)
+
+        # Brand Title
+        brand_frame = tk.Frame(side, bg=C["surface_low"])
+        brand_frame.pack(fill="x", pady=(0, 32))
+        tk.Label(brand_frame, text="La Casita Deli", font=fh(18, "bold italic"),
+                 bg=C["surface_low"], fg=C["primary"], anchor="w").pack(fill="x")
+        tk.Label(brand_frame, text="ADMIN TERMINAL", font=ff(7, "bold"),
+                 bg=C["surface_low"], fg=C["on_surface_variant"], anchor="w").pack(fill="x")
+
+        # Navigation
+        nav = tk.Frame(side, bg=C["surface_low"])
+        nav.pack(fill="both", expand=True)
+
+        items = [
+            ("dashboard", "Dashboard", False),
+            ("point_of_sale", "POS", True),
+            ("inventory_2", "Inventory", False),
+            ("receipt_long", "Orders", False),
+            ("settings", "Settings", False),
+        ]
+
+        for icon, label, active in items:
+            f = tk.Frame(nav, bg=C["primary"] if active else C["surface_low"], padx=12, pady=10)
+            f.pack(fill="x", pady=2)
+
+            # Label de icono (usando texto por ahora como placeholder de icono)
+            tk.Label(f, text="•", font=ff(10),
+                     bg=C["primary"] if active else C["surface_low"],
+                     fg="white" if active else C["on_surface_variant"]).pack(side="left", padx=(0, 8))
+
+            tk.Label(f, text=label, font=ff(9, "bold" if active else "normal"),
+                     bg=C["primary"] if active else C["surface_low"],
+                     fg="white" if active else C["on_surface_variant"]).pack(side="left")
+
+        # Bottom Profile
+        profile_box = tk.Frame(side, bg=C["surface_low"], pady=20)
+        profile_box.pack(side="bottom", fill="x")
+
+        tk.Frame(profile_box, bg=C["surface_high"], height=1).pack(fill="x", pady=(0, 20))
+
+        user_card = tk.Frame(profile_box, bg=C["surface_high"], padx=12, pady=12)
+        user_card.pack(fill="x", pady=(0, 12))
+
+        tk.Label(user_card, text=f"👤 {self.user['name']}", font=ff(9, "bold"),
+                 bg=C["surface_high"], fg=C["on_surface"], anchor="w").pack(fill="x")
+        tk.Label(user_card, text="Shift Manager", font=ff(7),
+                 bg=C["surface_high"], fg=C["on_surface_variant"], anchor="w").pack(fill="x")
+
+        btn_reg = tk.Button(profile_box, text="OPEN REGISTER", font=ff(7, "bold"),
+                            bg=C["secondary_container"], fg=C["on_secondary_container"],
+                            relief="flat", bd=0, pady=10, cursor="hand2")
+        btn_reg.pack(fill="x")
+
+    def _build_header(self, parent):
+        hdr = tk.Frame(parent, bg=C["primary"], padx=32, pady=24)
         hdr.pack(fill="x", side="top")
-        hdr.pack_propagate(False)
 
-        left = tk.Frame(hdr, bg=C["header"])
-        left.pack(side="left", padx=20, pady=10)
+        top_row = tk.Frame(hdr, bg=C["primary"])
+        top_row.pack(fill="x", pady=(0, 24))
 
-        logo_frame = tk.Frame(left, bg="#2A5240", padx=8, pady=4)
-        logo_frame.pack(side="left")
-        tk.Label(logo_frame, text="LC", font=ff(12, "bold"),
-                 bg="#2A5240", fg="white").pack()
+        left = tk.Frame(top_row, bg=C["primary"])
+        left.pack(side="left")
+        tk.Label(left, text="Artisanal Market POS", font=fh(18, "italic"),
+                 bg=C["primary"], fg="white").pack(anchor="w")
+        tk.Label(left, text=f"Transaction #4829 • Station 02 • {self.location['name']}",
+                 font=ff(8), bg=C["primary"], fg=C["on_primary_container"]).pack(anchor="w")
 
-        tk.Frame(left, bg="#3D6B50", width=1).pack(side="left", fill="y", pady=6, padx=14)
+        right = tk.Frame(top_row, bg=C["primary"])
+        right.pack(side="right")
 
-        brand_info = tk.Frame(left, bg=C["header"])
-        brand_info.pack(side="left")
-        tk.Label(brand_info, text="La Casita", font=ff(13, "bold"),
-                 bg=C["header"], fg=C["header_text"]).pack(anchor="w")
-        tk.Label(brand_info, text="caja", font=ff(7, "bold"),
-                 bg=C["header"], fg=C["header_dim"]).pack(anchor="w")
+        # Search bar integration in header
+        search_wrap = tk.Frame(right, bg=C["primary_container"], padx=16, pady=8)
+        # We will make this more rounded in a later step when we refine search
+        search_wrap.pack(side="left", padx=8)
 
-        center = tk.Frame(hdr, bg=C["header"])
-        center.place(relx=0.5, rely=0.5, anchor="center")
+        tk.Label(search_wrap, text="🔍", font=ff(10), bg=C["primary_container"],
+                 fg=C["on_primary_container"]).pack(side="left", padx=(0, 8))
 
-        caja_badge = tk.Frame(center, bg=C["header2"], padx=12, pady=4)
-        caja_badge.pack(side="left", padx=8)
-        self.lbl_session_dot = tk.Label(caja_badge, text="●", font=ff(8),
-                                         bg=C["header2"], fg=C["green_light"])
-        self.lbl_session_dot.pack(side="left", padx=(0, 4))
-        tk.Label(caja_badge, text="Caja abierta · Turno 1", font=ff(9),
-                 bg=C["header2"], fg=C["header_text"]).pack(side="left")
+        # We'll use the existing search_var, but need to move the entry here
+        self.hdr_search_entry = tk.Entry(
+            search_wrap,
+            textvariable=self.search_var,
+            font=ff(10),
+            bg=C["primary_container"],
+            fg="white",
+            insertbackground="white",
+            relief="flat",
+            bd=0,
+            width=25
+        )
+        self.hdr_search_entry.pack(side="left")
 
-        tk.Label(center, text="Ventas", font=ff(9),
-                 bg=C["header"], fg=C["header_dim"],
-                 cursor="hand2", padx=10).pack(side="left")
+        # Restore bindings for the search entry
+        self.hdr_search_entry.bind("<FocusIn>",  self._search_focus_in)
+        self.hdr_search_entry.bind("<FocusOut>", self._search_focus_out)
+        self.hdr_search_entry.bind("<Return>",   self._on_search_enter)
 
-        suc_frame = tk.Frame(center, bg=C["header2"], padx=10, pady=4)
-        suc_frame.pack(side="left", padx=8)
-        tk.Label(suc_frame, text=f"🏪  {self.location['name']} ∨", font=ff(9),
-                 bg=C["header2"], fg=C["header_text"]).pack()
+        # Badge escáner integration
+        scan_btn = tk.Frame(right, bg=C["primary_container"], padx=10, pady=8)
+        scan_btn.pack(side="left", padx=8)
+        tk.Label(scan_btn, text="📷", font=ff(12), bg=C["primary_container"],
+                 fg="white").pack()
 
-        # Badge escáner TC52
-        scan_badge = tk.Frame(center, bg="#0A3020", padx=10, pady=4)
-        scan_badge.pack(side="left", padx=8)
-        tk.Label(scan_badge, text="📷 TC52 Listo", font=ff(8),
-                 bg="#0A3020", fg=C["green_light"]).pack()
+        # Categories row
+        self.cat_frame = tk.Frame(hdr, bg=C["primary"])
+        self.cat_frame.pack(fill="x")
+        self._update_cat_buttons()
 
-        right = tk.Frame(hdr, bg=C["header"])
-        right.pack(side="right", padx=20)
-
-        self.lbl_clock = tk.Label(right, text="", font=fm(10),
-                                   bg=C["header"], fg=C["green_light"])
-        self.lbl_clock.pack(side="right", padx=14)
-
-        tk.Frame(right, bg="#3D6B50", width=1).pack(side="right", fill="y", pady=8)
-
-        user_frame = tk.Frame(right, bg=C["header"])
-        user_frame.pack(side="right", padx=12)
-        tk.Label(user_frame, text=f"👤  {self.user['name']}", font=ff(9),
-                 bg=C["header"], fg=C["header_text"]).pack()
-        tk.Label(user_frame, text=self._db_status, font=ff(7),
-                 bg=C["header"], fg=C["header_dim"]).pack(anchor="e")
-
-    def _build_body(self):
-        body = tk.Frame(self, bg=C["bg"])
+    def _build_body(self, parent):
+        body = tk.Frame(parent, bg=C["bg"])
         body.pack(fill="both", expand=True)
 
-        self.left_panel = tk.Frame(body, bg=C["bg"])
+        self.left_panel = tk.Frame(body, bg=C["surface_low"]) # Product grid area
         self.left_panel.pack(side="left", fill="both", expand=True)
 
-        tk.Frame(body, bg=C["border"], width=1).pack(side="left", fill="y")
+        # Tonal layering instead of border
+        # tk.Frame(body, bg=C["border"], width=1).pack(side="left", fill="y")
 
-        self.right_panel = tk.Frame(body, bg=C["surface"], width=360)
+        self.right_panel = tk.Frame(body, bg=C["surface_lowest"], width=380) # Ticket
         self.right_panel.pack(side="right", fill="both")
         self.right_panel.pack_propagate(False)
 
@@ -700,74 +774,21 @@ class CajaApp(tk.Tk):
     #  LEFT PANEL
     # ────────────────────────────────────────────────────────────
     def _build_left(self, parent):
-        search_frame = tk.Frame(parent, bg=C["bg"])
-        search_frame.pack(fill="x", padx=20, pady=16)
+        # Already moved search and categories to header, but we still need
+        # a placeholder or adjustment to the grid frame.
 
-        entry_wrap = tk.Frame(search_frame, bg=C["surface"],
-                              highlightthickness=1, highlightbackground=C["border2"])
-        entry_wrap.pack(side="left", fill="x", expand=True)
+        grid_frame = tk.Frame(parent, bg=C["surface_low"])
+        grid_frame.pack(fill="both", expand=True, padx=32, pady=32)
 
-        tk.Label(entry_wrap, text="🔍", font=ff(12), bg=C["surface"],
-                 fg=C["text3"]).pack(side="left", padx=(14, 4), pady=8)
-
-        self.entry_search = tk.Entry(
-            entry_wrap,
-            textvariable=self.search_var,
-            font=ff(11),
-            bg=C["surface"],
-            fg=C["text"],
-            insertbackground=C["green"],
-            relief="flat",
-            bd=0
-        )
-        self.entry_search.pack(side="left", fill="x", expand=True, pady=10)
-
-        self.entry_search.bind("<FocusIn>",  self._search_focus_in)
-        self.entry_search.bind("<FocusOut>", self._search_focus_out)
-        self.entry_search.bind("<Return>",   self._on_search_enter)
-
-        scan_icon = tk.Label(search_frame, text="📷", font=ff(14),
-                             bg=C["surface"], padx=12, pady=8,
-                             cursor="hand2",
-                             highlightthickness=1, highlightbackground=C["border2"])
-        scan_icon.pack(side="left", padx=(8, 0))
-        scan_icon.bind("<Button-1>", lambda e: self._focus_scan_mode())
-
-        # Chips de categorías (dinámicos desde la BD)
-        cat_frame = tk.Frame(parent, bg=C["bg"])
-        cat_frame.pack(fill="x", padx=20, pady=(0, 12))
-
-        self.cat_buttons = {}
-        cat_icons = {
-            "Todos": "", "Abarrotes": "🌾", "Bebidas": "🥤", "Lácteos": "🥛",
-            "Limpieza": "🧹", "Botanas": "🍿", "Panadería": "🥖",
-            "Carnes frías": "🥩", "Higiene": "🧼", "Otros": "📦",
-            # Para datos mock:
-            "Quesos": "🧀", "Vinos": "🍷", "Dulces": "🍬", "Aceites": "🫒",
-        }
-        for cat in self._categories:
-            icon  = cat_icons.get(cat, "")
-            label = f"{icon} {cat}".strip() if icon else cat
-            btn = tk.Label(cat_frame, text=label, font=ff(9, "bold"),
-                           padx=12, pady=6, cursor="hand2", relief="flat")
-            btn.pack(side="left", padx=(0, 6))
-            btn.bind("<Button-1>", lambda e, c=cat: self._select_category(c))
-            self.cat_buttons[cat] = btn
-
-        self._update_cat_buttons()
-
-        grid_frame = tk.Frame(parent, bg=C["bg"])
-        grid_frame.pack(fill="both", expand=True, padx=20)
-
-        self.prod_canvas = tk.Canvas(grid_frame, bg=C["bg"], highlightthickness=0)
+        self.prod_canvas = tk.Canvas(grid_frame, bg=C["surface_low"], highlightthickness=0)
         scroll_y = tk.Scrollbar(grid_frame, orient="vertical",
                                 command=self.prod_canvas.yview,
-                                bg=C["border"], troughcolor=C["bg"])
+                                bg=C["surface_low"], troughcolor=C["surface_low"])
         scroll_y.pack(side="right", fill="y")
         self.prod_canvas.pack(side="left", fill="both", expand=True)
         self.prod_canvas.configure(yscrollcommand=scroll_y.set)
 
-        self.prod_inner = tk.Frame(self.prod_canvas, bg=C["bg"])
+        self.prod_inner = tk.Frame(self.prod_canvas, bg=C["surface_low"])
         self._prod_window = self.prod_canvas.create_window((0, 0), window=self.prod_inner, anchor="nw")
 
         self.prod_inner.bind("<Configure>", lambda e: self.prod_canvas.configure(
@@ -778,16 +799,14 @@ class CajaApp(tk.Tk):
 
     def _focus_scan_mode(self):
         self.search_var.set("")
-        self.entry_search.focus_set()
+        self.hdr_search_entry.focus_set()
         Toast(self, "Modo escáner activo", "success", 1200)
 
     def _search_focus_in(self, e):
-        self.entry_search.master.config(highlightbackground=C["green_mid"],
-                                        highlightthickness=2)
+        self.hdr_search_entry.master.config(bg=C["green_mid"])
 
     def _search_focus_out(self, e):
-        self.entry_search.master.config(highlightbackground=C["border2"],
-                                        highlightthickness=1)
+        self.hdr_search_entry.master.config(bg=C["primary_container"])
 
     def _select_category(self, cat):
         self.active_category.set(cat)
@@ -795,11 +814,30 @@ class CajaApp(tk.Tk):
         self._load_products()
 
     def _update_cat_buttons(self):
+        if not hasattr(self, "cat_frame"): return
+
+        # Create buttons if they don't exist
+        if not self.cat_buttons:
+            cat_icons = {
+                "Todos": "", "Abarrotes": "🌾", "Bebidas": "🥤", "Lácteos": "🥛",
+                "Limpieza": "🧹", "Botanas": "🍿", "Panadería": "🥖",
+                "Carnes frías": "🥩", "Higiene": "🧼", "Otros": "📦",
+                "Quesos": "🧀", "Vinos": "🍷", "Dulces": "🍬", "Aceites": "🫒",
+            }
+            for cat in self._categories:
+                icon  = cat_icons.get(cat, "")
+                label = f"{icon} {cat}".upper() if icon else cat.upper()
+                btn = tk.Label(self.cat_frame, text=label, font=ff(7, "bold"),
+                               padx=16, pady=8, cursor="hand2", relief="flat")
+                btn.pack(side="left", padx=(0, 8))
+                btn.bind("<Button-1>", lambda e, c=cat: self._select_category(c))
+                self.cat_buttons[cat] = btn
+
         for cat, btn in self.cat_buttons.items():
             if cat == self.active_category.get():
-                btn.config(bg=C["green"], fg="white")
+                btn.config(bg=C["on_primary"], fg=C["primary"])
             else:
-                btn.config(bg=C["surface"], fg=C["text2"])
+                btn.config(bg=C["primary_container"], fg=C["on_primary_container"])
 
     # ────────────────────────────────────────────────────────────
     #  PRODUCT CARDS GRID
@@ -828,77 +866,84 @@ class CajaApp(tk.Tk):
         stock    = p.get("stock_actual", p.get("stock_actual", 0))
         is_out   = stock <= 0
         is_low   = 0 < stock <= p.get("stock_minimo", 5)
-        # emoji: puede ser un emoji directo o una URL de imagen
         raw_emoji = p.get("emoji", p.get("imagen_url", "📦"))
         emoji     = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
 
+        # Tonal Layering: Background lowest (white) on background low (cream)
         card = tk.Frame(
             self.prod_inner,
-            bg=C["surface"],
+            bg=C["surface_lowest"],
             cursor="hand2" if not is_out else "arrow",
-            highlightthickness=1,
-            highlightbackground=C["border"]
+            highlightthickness=0
         )
-        card.grid(row=row, column=col, padx=6, pady=6, sticky="nsew")
+        card.grid(row=row, column=col, padx=8, pady=8, sticky="nsew")
 
-        inner = tk.Frame(card, bg=C["surface"], padx=14, pady=12)
+        inner = tk.Frame(card, bg=C["surface_lowest"], padx=16, pady=16)
         inner.pack(fill="both", expand=True)
 
-        badge_row = tk.Frame(inner, bg=C["surface"])
-        badge_row.pack(fill="x")
+        # Image placeholder frame
+        img_placeholder = tk.Frame(inner, bg=C["surface_low"], height=160)
+        img_placeholder.pack(fill="x", pady=(0, 12))
+        img_placeholder.pack_propagate(False)
+        tk.Label(img_placeholder, text=emoji, font=ff(40), bg=C["surface_low"]).place(relx=0.5, rely=0.5, anchor="center")
 
-        emoji_lbl = tk.Label(badge_row, text=emoji, font=ff(22), bg=C["surface"])
-        emoji_lbl.pack(side="left")
+        # Category tag
+        cat_text = p.get("categoria", "").upper()
+        tk.Label(inner, text=cat_text, font=ff(7, "bold"),
+                 bg=C["surface_lowest"], fg=C["secondary"], anchor="w").pack(fill="x")
 
-        if is_out:
-            badge = tk.Label(badge_row, text="Agotado", font=ff(7, "bold"),
-                             bg=C["chip_red"], fg=C["red"], padx=6, pady=2)
-            badge.pack(side="right", anchor="n")
-        elif is_low:
-            badge = tk.Label(badge_row, text=f"Quedan {stock}", font=ff(7, "bold"),
-                             bg=C["chip_amber"], fg=C["amber"], padx=6, pady=2)
-            badge.pack(side="right", anchor="n")
-        else:
-            badge = tk.Label(badge_row, text=f"{stock} disp.", font=ff(7),
-                             bg=C["surface"], fg=C["text3"])
-            badge.pack(side="right", anchor="n")
-
-        # SKU / código de barras
-        sku_text = p.get("codigo_barras", "")
-        tk.Label(inner, text=sku_text or "", font=fm(8),
-                 bg=C["surface"], fg=C["text3"], anchor="w").pack(fill="x", pady=(6, 0))
-
-        name_lbl = tk.Label(inner, text=p["nombre"], font=ff(10, "bold"),
-                            bg=C["surface"], fg=C["text"] if not is_out else C["text3"],
+        # Headline
+        name_lbl = tk.Label(inner, text=p["nombre"], font=fh(12, "bold"),
+                            bg=C["surface_lowest"], fg=C["on_surface"] if not is_out else C["on_surface_variant"],
                             anchor="w", wraplength=160, justify="left")
-        name_lbl.pack(fill="x")
+        name_lbl.pack(fill="x", pady=(4, 8))
 
-        price_frame = tk.Frame(inner, bg=C["surface"])
-        price_frame.pack(fill="x", pady=(8, 0))
+        # Bottom row: Price and Stock
+        bottom = tk.Frame(inner, bg=C["surface_lowest"])
+        bottom.pack(fill="x", side="bottom")
 
         price = float(p.get("precio_venta", p.get("precio_venta", 0)))
-        price_lbl = tk.Label(price_frame, text=f"${price:,.2f}",
-                             font=ff(13, "bold"), bg=C["surface"],
-                             fg=C["green"] if not is_out else C["text3"])
+        price_lbl = tk.Label(bottom, text=f"${price:,.2f}",
+                             font=ff(14, "bold"), bg=C["surface_lowest"],
+                             fg=C["primary"] if not is_out else C["on_surface_variant"])
         price_lbl.pack(side="left")
 
-        # Categoría como sub-etiqueta
-        cat_text = p.get("categoria", "")
-        tk.Label(price_frame, text=cat_text, font=ff(7),
-                 bg=C["surface"], fg=C["text3"]).pack(side="right", pady=(3, 0))
+        if is_out:
+            badge = tk.Label(bottom, text="OUT OF STOCK", font=ff(6, "bold"),
+                             bg=C["chip_red"], fg=C["red"], padx=6, pady=2)
+            badge.pack(side="right")
+        elif is_low:
+            badge = tk.Label(bottom, text=f"ONLY {stock}", font=ff(6, "bold"),
+                             bg=C["chip_amber"], fg=C["amber"], padx=6, pady=2)
+            badge.pack(side="right")
+        else:
+            badge = tk.Label(bottom, text=f"{stock} IN STOCK", font=ff(6, "bold"),
+                             bg=C["chip_green"], fg=C["primary"], padx=6, pady=2)
+            badge.pack(side="right")
 
         def on_enter(e, c=card):
             if not is_out:
-                c.config(highlightbackground=C["green_mid"], highlightthickness=2)
+                c.config(bg=C["surface_high"])
+                for w in c.winfo_children():
+                    if isinstance(w, tk.Frame): w.config(bg=C["surface_high"])
+                    for sw in w.winfo_children():
+                        if isinstance(sw, (tk.Label, tk.Frame)): sw.config(bg=C["surface_high"])
 
         def on_leave(e, c=card):
-            c.config(highlightbackground=C["border"], highlightthickness=1)
+            c.config(bg=C["surface_lowest"])
+            for w in c.winfo_children():
+                if isinstance(w, tk.Frame): w.config(bg=C["surface_lowest"])
+                for sw in w.winfo_children():
+                    if isinstance(sw, (tk.Label, tk.Frame)): sw.config(bg=C["surface_lowest"])
+            # Reset image placeholder which has a different background
+            img_placeholder.config(bg=C["surface_low"])
+            for sw in img_placeholder.winfo_children(): sw.config(bg=C["surface_low"])
 
         def on_click(e, prod=p):
             if not is_out:
                 self._add_to_cart(prod)
 
-        for widget in [card, inner, badge_row, emoji_lbl, name_lbl, price_lbl, price_frame]:
+        for widget in [card, inner, img_placeholder, name_lbl, price_lbl, bottom]:
             widget.bind("<Enter>", on_enter)
             widget.bind("<Leave>", on_leave)
             widget.bind("<Button-1>", on_click)
@@ -911,38 +956,44 @@ class CajaApp(tk.Tk):
         parent.grid_columnconfigure(0, weight=1)
 
         # Fila 0: Header
-        t_header = tk.Frame(parent, bg=C["surface"])
-        t_header.grid(row=0, column=0, sticky="ew", padx=20, pady=(16, 0))
+        t_header = tk.Frame(parent, bg=C["surface_lowest"], padx=24, pady=24)
+        t_header.grid(row=0, column=0, sticky="ew")
 
-        tk.Label(t_header, text="Ticket", font=ff(16, "bold"),
-                 bg=C["surface"], fg=C["text"]).pack(side="left")
+        tk.Label(t_header, text="Current Ticket", font=fh(16, "bold"),
+                 bg=C["surface_lowest"], fg=C["primary"]).pack(side="left")
 
-        clear_btn = tk.Label(t_header, text="🗑 Limpiar", font=ff(8),
-                             bg=C["bg2"], fg=C["text2"], padx=8, pady=4, cursor="hand2")
-        clear_btn.pack(side="right", padx=(4, 0))
+        clear_btn = tk.Label(t_header, text="🗑", font=ff(12),
+                             bg=C["surface_lowest"], fg=C["on_surface_variant"], padx=8, pady=4, cursor="hand2")
+        clear_btn.pack(side="right")
         clear_btn.bind("<Button-1>", lambda e: self._clear_cart())
 
         self.lbl_items_count = tk.Label(t_header, text="",
-                                         font=ff(8, "bold"),
-                                         bg=C["green_pale"], fg=C["green"],
+                                         font=ff(7, "bold"),
+                                         bg=C["surface_low"], fg=C["primary"],
                                          padx=8, pady=3)
-        self.lbl_items_count.pack(side="right")
+        self.lbl_items_count.pack(side="right", padx=8)
 
-        tk.Frame(parent, bg=C["border"], height=1).grid(row=0, column=0, sticky="ews",
-                                                         padx=0, pady=(48, 0))
+        # Sub-header info
+        sub_info = tk.Frame(parent, bg=C["surface_lowest"], padx=24)
+        sub_info.grid(row=0, column=0, sticky="ew", pady=(64, 12))
+        tk.Label(sub_info, text="👤 CUSTOMER: GUEST WALKER • TICKET #402",
+                 font=ff(7, "bold"), bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(anchor="w")
+
+        tk.Frame(parent, bg=C["surface_low"], height=1).grid(row=0, column=0, sticky="ews",
+                                                         padx=24, pady=(0, 0))
 
         # Fila 1: Carrito scrollable
-        cart_wrap = tk.Frame(parent, bg=C["surface"])
+        cart_wrap = tk.Frame(parent, bg=C["surface_lowest"])
         cart_wrap.grid(row=1, column=0, sticky="nsew")
 
-        self.cart_canvas = tk.Canvas(cart_wrap, bg=C["surface"], highlightthickness=0)
+        self.cart_canvas = tk.Canvas(cart_wrap, bg=C["surface_lowest"], highlightthickness=0)
         cart_scroll = tk.Scrollbar(cart_wrap, orient="vertical",
                                    command=self.cart_canvas.yview)
         cart_scroll.pack(side="right", fill="y")
         self.cart_canvas.pack(side="left", fill="both", expand=True)
         self.cart_canvas.configure(yscrollcommand=cart_scroll.set)
 
-        self.cart_inner = tk.Frame(self.cart_canvas, bg=C["surface"])
+        self.cart_inner = tk.Frame(self.cart_canvas, bg=C["surface_lowest"], padx=24)
         self._cart_window = self.cart_canvas.create_window((0, 0), window=self.cart_inner,
                                                             anchor="nw")
         self.cart_inner.bind("<Configure>", lambda e: self.cart_canvas.configure(
@@ -951,52 +1002,54 @@ class CajaApp(tk.Tk):
             self._cart_window, width=e.width))
 
         # Fila 2: Pie (totales + pago + cobrar)
-        pie = tk.Frame(parent, bg=C["surface"])
+        pie = tk.Frame(parent, bg=C["surface_high"])
         pie.grid(row=2, column=0, sticky="ew")
 
-        tk.Frame(pie, bg=C["border"], height=1).pack(fill="x")
-
-        totals_inner = tk.Frame(pie, bg=C["surface"], padx=20, pady=12)
+        totals_inner = tk.Frame(pie, bg=C["surface_high"], padx=24, pady=24)
         totals_inner.pack(fill="x")
 
-        r_sub = tk.Frame(totals_inner, bg=C["surface"])
-        r_sub.pack(fill="x", pady=2)
-        tk.Label(r_sub, text="Subtotal", font=ff(9),
-                 bg=C["surface"], fg=C["text2"]).pack(side="left")
-        self.lbl_subtotal = tk.Label(r_sub, text="$0.00", font=fm(9),
-                                      bg=C["surface"], fg=C["text2"])
+        r_sub = tk.Frame(totals_inner, bg=C["surface_high"])
+        r_sub.pack(fill="x", pady=1)
+        tk.Label(r_sub, text="Subtotal", font=ff(8),
+                 bg=C["surface_high"], fg=C["on_surface_variant"]).pack(side="left")
+        self.lbl_subtotal = tk.Label(r_sub, text="$0.00", font=ff(8, "bold"),
+                                      bg=C["surface_high"], fg=C["on_surface_variant"])
         self.lbl_subtotal.pack(side="right")
 
-        r_tax = tk.Frame(totals_inner, bg=C["surface"])
-        r_tax.pack(fill="x", pady=2)
-        tk.Label(r_tax, text="IVA 16%", font=ff(9),
-                 bg=C["surface"], fg=C["text2"]).pack(side="left")
-        self.lbl_tax = tk.Label(r_tax, text="$0.00", font=fm(9),
-                                 bg=C["surface"], fg=C["text2"])
+        r_tax = tk.Frame(totals_inner, bg=C["surface_high"])
+        r_tax.pack(fill="x", pady=1)
+        tk.Label(r_tax, text="Tax (16%)", font=ff(8),
+                 bg=C["surface_high"], fg=C["on_surface_variant"]).pack(side="left")
+        self.lbl_tax = tk.Label(r_tax, text="$0.00", font=ff(8, "bold"),
+                                 bg=C["surface_high"], fg=C["on_surface_variant"])
         self.lbl_tax.pack(side="right")
 
-        tk.Frame(totals_inner, bg=C["border"], height=1).pack(fill="x", pady=8)
+        tk.Frame(totals_inner, bg=C["surface_highest"], height=1).pack(fill="x", pady=12)
 
-        r_total = tk.Frame(totals_inner, bg=C["surface"])
-        r_total.pack(fill="x")
-        tk.Label(r_total, text="TOTAL", font=ff(12, "bold"),
-                 bg=C["surface"], fg=C["text"]).pack(side="left")
-        self.lbl_total = tk.Label(r_total, text="$0.00", font=fm(20, "bold"),
-                                   bg=C["surface"], fg=C["text"])
+        r_total = tk.Frame(totals_inner, bg=C["surface_high"])
+        r_total.pack(fill="x", pady=(0, 16))
+        tk.Label(r_total, text="Total", font=fh(18, "italic"),
+                 bg=C["surface_high"], fg=C["primary"]).pack(side="left")
+        self.lbl_total = tk.Label(r_total, text="$0.00", font=ff(24, "bold"),
+                                   bg=C["surface_high"], fg=C["primary"])
         self.lbl_total.pack(side="right")
 
         # Método de pago
-        pay_frame = tk.Frame(pie, bg=C["surface"], padx=20, pady=8)
+        pay_frame = tk.Frame(pie, bg=C["surface_high"], padx=24, pady=8)
         pay_frame.pack(fill="x")
 
-        self.btn_efectivo = tk.Label(pay_frame, text="💵  Efectivo",
-                                      font=ff(9, "bold"), padx=20, pady=8,
-                                      cursor="hand2", relief="flat")
+        self.btn_efectivo = tk.Label(pay_frame, text="💵  EFECTIVO",
+                                      font=ff(7, "bold"), padx=20, pady=16,
+                                      bg=C["surface_lowest"], fg=C["on_surface"],
+                                      cursor="hand2", relief="flat", highlightthickness=1,
+                                      highlightbackground=C["outline_variant"])
         self.btn_efectivo.pack(side="left", fill="x", expand=True, padx=(0, 4))
 
-        self.btn_tarjeta = tk.Label(pay_frame, text="💳  Tarjeta",
-                                     font=ff(9, "bold"), padx=20, pady=8,
-                                     cursor="hand2", relief="flat")
+        self.btn_tarjeta = tk.Label(pay_frame, text="💳  TARJETA",
+                                     font=ff(7, "bold"), padx=20, pady=16,
+                                     bg=C["surface_lowest"], fg=C["on_surface"],
+                                     cursor="hand2", relief="flat", highlightthickness=1,
+                                     highlightbackground=C["outline_variant"])
         self.btn_tarjeta.pack(side="left", fill="x", expand=True, padx=(4, 0))
 
         self.btn_efectivo.bind("<Button-1>", lambda e: self._set_payment("efectivo"))
@@ -1004,10 +1057,10 @@ class CajaApp(tk.Tk):
         self._update_pay_btns()
 
         # Botón Cobrar
-        btn_area = tk.Frame(pie, bg=C["surface"])
-        btn_area.pack(fill="x", padx=20, pady=(4, 16))
+        btn_area = tk.Frame(pie, bg=C["surface_high"])
+        btn_area.pack(fill="x", padx=24, pady=(4, 24))
 
-        self.btn_cobrar_canvas = tk.Canvas(btn_area, bg=C["surface"],
+        self.btn_cobrar_canvas = tk.Canvas(btn_area, bg=C["surface_high"],
                                            height=50, highlightthickness=0)
         self.btn_cobrar_canvas.pack(fill="x")
 
@@ -1021,11 +1074,11 @@ class CajaApp(tk.Tk):
         self._last_cobrar_enabled = False
 
         # Atajos de teclado
-        self.bind_all("<F1>", lambda e: self.entry_search.focus_set())
+        self.bind_all("<F1>", lambda e: self.hdr_search_entry.focus_set())
         self.bind_all("<F2>", lambda e: self._process_sale())
         self.bind_all("<F3>", lambda e: self._clear_cart())
         self.bind_all("<Escape>", lambda e: (self.search_var.set(""),
-                                              self.entry_search.focus_set()))
+                                              self.hdr_search_entry.focus_set()))
 
     def _draw_cobrar_btn(self, amount_text, enabled=True):
         self._last_cobrar_text    = amount_text
@@ -1036,17 +1089,21 @@ class CajaApp(tk.Tk):
         if w < 10:
             return
         h = 50
-        r = 10
-        fill = C["green"] if enabled else C["text3"]
+        r = 12
+        fill = C["primary"] if enabled else C["surface_highest"]
+        text_color = "white" if enabled else C["on_surface_variant"]
+
+        # Rounded corners for the button
         c.create_arc(0, 0, r*2, r*2, start=90, extent=90, fill=fill, outline=fill)
         c.create_arc(w-r*2, 0, w, r*2, start=0, extent=90, fill=fill, outline=fill)
         c.create_arc(0, h-r*2, r*2, h, start=180, extent=90, fill=fill, outline=fill)
         c.create_arc(w-r*2, h-r*2, w, h, start=270, extent=90, fill=fill, outline=fill)
         c.create_rectangle(r, 0, w-r, h, fill=fill, outline=fill)
         c.create_rectangle(0, r, w, h-r, fill=fill, outline=fill)
-        text = f"⊙  Cobrar {amount_text}" if enabled else "⊙  Cobrar $0.00"
-        c.create_text(w//2, h//2, text=text, fill="white",
-                      font=(F, 12, "bold"), anchor="center")
+
+        text = f"COMPLETE TRANSACTION →" if enabled else "SELECT ITEMS"
+        c.create_text(w//2, h//2, text=text, fill=text_color,
+                      font=ff(9, "bold"), anchor="center")
         c.config(cursor="hand2" if enabled else "arrow")
 
     def _set_payment(self, method):
@@ -1056,11 +1113,11 @@ class CajaApp(tk.Tk):
     def _update_pay_btns(self):
         sel = self.pay_var.get()
         if sel == "efectivo":
-            self.btn_efectivo.config(bg=C["green"], fg="white")
-            self.btn_tarjeta.config(bg=C["bg2"], fg=C["text2"])
+            self.btn_efectivo.config(bg=C["primary"], fg="white", highlightbackground=C["primary"])
+            self.btn_tarjeta.config(bg=C["surface_lowest"], fg=C["on_surface"], highlightbackground=C["outline_variant"])
         else:
-            self.btn_tarjeta.config(bg=C["green"], fg="white")
-            self.btn_efectivo.config(bg=C["bg2"], fg=C["text2"])
+            self.btn_tarjeta.config(bg=C["primary"], fg="white", highlightbackground=C["primary"])
+            self.btn_efectivo.config(bg=C["surface_lowest"], fg=C["on_surface"], highlightbackground=C["outline_variant"])
 
     # ────────────────────────────────────────────────────────────
     #  RENDER CART
@@ -1070,75 +1127,80 @@ class CajaApp(tk.Tk):
             w.destroy()
 
         if not self.cart:
-            empty_frame = tk.Frame(self.cart_inner, bg=C["surface"])
+            empty_frame = tk.Frame(self.cart_inner, bg=C["surface_lowest"])
             empty_frame.pack(fill="both", expand=True, padx=20, pady=60)
             tk.Label(empty_frame, text="🛒", font=ff(36),
-                     bg=C["surface"], fg=C["text3"]).pack()
-            tk.Label(empty_frame, text="Ticket vacío", font=ff(12, "bold"),
-                     bg=C["surface"], fg=C["text3"]).pack(pady=(8, 4))
+                     bg=C["surface_lowest"], fg=C["surface_highest"]).pack()
+            tk.Label(empty_frame, text="Ticket vacío", font=fh(12, "bold"),
+                     bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(pady=(8, 4))
             tk.Label(empty_frame, text="Escanea un código o agrega productos",
-                     font=ff(9), bg=C["surface"], fg=C["text3"],
+                     font=ff(9), bg=C["surface_lowest"], fg=C["on_surface_variant"],
                      wraplength=200, justify="center").pack()
             return
 
         for i, item in enumerate(self.cart):
             p = item["product"]
-            item_frame = tk.Frame(self.cart_inner, bg=C["surface"], padx=16, pady=10)
+            item_frame = tk.Frame(self.cart_inner, bg=C["surface_lowest"], pady=12)
             item_frame.pack(fill="x")
 
-            r1 = tk.Frame(item_frame, bg=C["surface"])
+            r1 = tk.Frame(item_frame, bg=C["surface_lowest"])
             r1.pack(fill="x")
 
             raw_emoji = p.get("emoji", p.get("imagen_url", "📦"))
             emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
-            tk.Label(r1, text=emoji, font=ff(14), bg=C["surface"]).pack(side="left", padx=(0, 8))
 
-            info = tk.Frame(r1, bg=C["surface"])
+            # Small image box
+            img_box = tk.Frame(r1, bg=C["surface_low"], width=48, height=48)
+            img_box.pack(side="left", padx=(0, 12))
+            img_box.pack_propagate(False)
+            tk.Label(img_box, text=emoji, font=ff(16), bg=C["surface_low"]).place(relx=0.5, rely=0.5, anchor="center")
+
+            info = tk.Frame(r1, bg=C["surface_lowest"])
             info.pack(side="left", fill="x", expand=True)
 
-            nombre = p.get("nombre", p.get("nombre", ""))
-            name_truncated = nombre[:22] + "…" if len(nombre) > 22 else nombre
-            tk.Label(info, text=name_truncated, font=ff(9, "bold"),
-                     bg=C["surface"], fg=C["text"], anchor="w").pack(fill="x")
+            nombre = p.get("nombre", "")
+            tk.Label(info, text=nombre, font=ff(9, "bold"),
+                     bg=C["surface_lowest"], fg=C["on_surface"], anchor="w").pack(fill="x")
 
-            price = float(p.get("precio_venta", 0))
-            sku   = p.get("codigo_barras", "")
-            price_row = tk.Frame(info, bg=C["surface"])
-            price_row.pack(fill="x")
-            tk.Label(price_row, text=f"${price:,.2f}", font=fm(8),
-                     bg=C["surface"], fg=C["text2"]).pack(side="left")
-            tk.Label(price_row, text=f"c/u · {sku}", font=ff(7),
-                     bg=C["surface"], fg=C["text3"]).pack(side="left", padx=4)
+            tk.Label(info, text=f"QTY: {item['qty']}", font=ff(7),
+                     bg=C["surface_lowest"], fg=C["on_surface_variant"], anchor="w").pack(fill="x")
 
-            tk.Label(r1, text=f"${item['subtotal']:,.2f}",
-                     font=fm(10, "bold"), bg=C["surface"], fg=C["text"]).pack(side="right")
+            price_val = float(item['subtotal'])
+            tk.Label(r1, text=f"${price_val:,.2f}",
+                     font=ff(10, "bold"), bg=C["surface_lowest"], fg=C["primary"]).pack(side="right")
 
-            r2 = tk.Frame(item_frame, bg=C["surface"])
-            r2.pack(fill="x", pady=(6, 0))
+            r2 = tk.Frame(item_frame, bg=C["surface_lowest"])
+            r2.pack(fill="x", pady=(4, 0))
 
-            del_btn = tk.Label(r2, text="Eliminar", font=ff(8),
-                               bg=C["surface"], fg=C["text3"], cursor="hand2")
+            del_btn = tk.Label(r2, text="REMOVE", font=ff(6, "bold"),
+                               bg=C["surface_lowest"], fg=C["error"], cursor="hand2")
             del_btn.pack(side="left")
             del_btn.bind("<Button-1>", lambda e, idx=i: self._remove_item(idx))
 
-            ctrl = tk.Frame(r2, bg=C["bg2"])
+            # Qty controls
+            ctrl = tk.Frame(r2, bg=C["surface_low"])
             ctrl.pack(side="right")
 
-            minus = tk.Label(ctrl, text=" − ", font=ff(11, "bold"),
-                             bg=C["bg2"], fg=C["text"], cursor="hand2", pady=2)
+            minus = tk.Label(ctrl, text=" − ", font=ff(9, "bold"),
+                             bg=C["surface_low"], fg=C["on_surface"], cursor="hand2", pady=2)
             minus.pack(side="left")
             minus.bind("<Button-1>", lambda e, idx=i: self._change_qty(idx, -1))
 
-            tk.Label(ctrl, text=f"  {item['qty']}  ", font=fm(10, "bold"),
-                     bg=C["bg2"], fg=C["text"]).pack(side="left")
+            tk.Label(ctrl, text=f" {item['qty']} ", font=ff(8, "bold"),
+                     bg=C["surface_low"], fg=C["on_surface"]).pack(side="left")
 
-            plus = tk.Label(ctrl, text=" + ", font=ff(11, "bold"),
-                            bg=C["bg2"], fg=C["green"], cursor="hand2", pady=2)
+            plus = tk.Label(ctrl, text=" + ", font=ff(9, "bold"),
+                            bg=C["surface_low"], fg=C["primary"], cursor="hand2", pady=2)
             plus.pack(side="left")
             plus.bind("<Button-1>", lambda e, idx=i: self._change_qty(idx, 1))
+            # In editorial style, we might want to keep it simple.
 
             if i < len(self.cart) - 1:
-                tk.Frame(self.cart_inner, bg=C["border"], height=1).pack(fill="x", padx=16)
+                # Dotted/Dashed separator effect
+                sep = tk.Frame(self.cart_inner, bg=C["outline_variant"], height=1)
+                sep.pack(fill="x", pady=4)
+                # Note: Tkinter doesn't have easy dashed lines for frames,
+                # so we use a very thin line or tonal shift.
 
         self.cart_canvas.update_idletasks()
         self.cart_canvas.yview_moveto(1.0)
@@ -1275,91 +1337,93 @@ class CajaApp(tk.Tk):
         self.active_category.set("Todos")
         self._update_cat_buttons()
         self._load_products()
-        self.entry_search.focus_set()
+        self.hdr_search_entry.focus_set()
 
     # ════════════════════════════════════════════════════════════
     #  MODAL EFECTIVO
     # ════════════════════════════════════════════════════════════
     def _show_cash_modal(self, folio, total, subtotal, tax, cart_snapshot):
         dlg = tk.Toplevel(self)
-        dlg.title("Cobro en Efectivo")
-        dlg.configure(bg=C["surface"])
+        dlg.title("CASH PAYMENT")
+        dlg.configure(bg=C["surface_lowest"])
         dlg.resizable(False, False)
         dlg.grab_set()
         dlg.attributes("-topmost", True)
 
-        w, h = 460, 640
+        w, h = 460, 680
         x = self.winfo_x() + (self.winfo_width()  - w) // 2
         y = self.winfo_y() + (self.winfo_height() - h) // 2
         dlg.geometry(f"{w}x{h}+{x}+{y}")
 
-        hdr = tk.Frame(dlg, bg=C["green"], pady=20)
+        hdr = tk.Frame(dlg, bg=C["primary"], pady=32)
         hdr.pack(fill="x")
-        tk.Label(hdr, text="💵", font=ff(32), bg=C["green"]).pack()
-        tk.Label(hdr, text="Cobro en Efectivo", font=ff(14, "bold"),
-                 bg=C["green"], fg="white").pack(pady=(4, 0))
-        tk.Label(hdr, text=f"Ticket {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}",
-                 font=ff(8), bg=C["green"], fg=C["green_light"]).pack()
+        tk.Label(hdr, text="💵", font=ff(32), bg=C["primary"]).pack()
+        tk.Label(hdr, text="CASH PAYMENT", font=fh(16, "bold"),
+                 bg=C["primary"], fg="white").pack(pady=(4, 0))
+        tk.Label(hdr, text=f"TICKET {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}".upper(),
+                 font=ff(7, "bold"), bg=C["primary"], fg=C["on_primary_container"]).pack()
 
-        body = tk.Frame(dlg, bg=C["surface"])
-        body.pack(fill="both", expand=True, padx=28, pady=16)
+        body = tk.Frame(dlg, bg=C["surface_lowest"])
+        body.pack(fill="both", expand=True, padx=32, pady=24)
 
-        items_bg = tk.Frame(body, bg=C["bg2"], pady=2)
-        items_bg.pack(fill="x", pady=(0, 12))
+        items_bg = tk.Frame(body, bg=C["surface_low"], pady=8)
+        items_bg.pack(fill="x", pady=(0, 16))
         for item in cart_snapshot:
-            r = tk.Frame(items_bg, bg=C["bg2"])
-            r.pack(fill="x", padx=12, pady=2)
+            r = tk.Frame(items_bg, bg=C["surface_low"])
+            r.pack(fill="x", padx=16, pady=2)
             nombre = item["product"].get("nombre", "")
             raw_emoji = item["product"].get("emoji", "📦")
             emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
             name = f"{emoji} {nombre} ×{item['qty']}"
-            tk.Label(r, text=name, font=ff(9), bg=C["bg2"],
-                     fg=C["text"], anchor="w").pack(side="left")
-            tk.Label(r, text=f"${item['subtotal']:,.2f}", font=fm(9),
-                     bg=C["bg2"], fg=C["text"]).pack(side="right")
+            tk.Label(r, text=name, font=ff(8), bg=C["surface_low"],
+                     fg=C["on_surface"], anchor="w").pack(side="left")
+            tk.Label(r, text=f"${item['subtotal']:,.2f}", font=ff(8, "bold"),
+                     bg=C["surface_low"], fg=C["on_surface"]).pack(side="right")
 
-        t_row = tk.Frame(body, bg=C["surface"])
+        t_row = tk.Frame(body, bg=C["surface_lowest"])
         t_row.pack(fill="x")
-        for lbl, val in [("Subtotal", f"${subtotal:,.2f}"), ("IVA 16%", f"${tax:,.2f}")]:
-            r = tk.Frame(t_row, bg=C["surface"])
+        for lbl, val in [("SUBTOTAL", f"${subtotal:,.2f}"), ("TAX 16%", f"${tax:,.2f}")]:
+            r = tk.Frame(t_row, bg=C["surface_lowest"])
             r.pack(fill="x", pady=1)
-            tk.Label(r, text=lbl, font=ff(9), bg=C["surface"], fg=C["text2"]).pack(side="left")
-            tk.Label(r, text=val, font=fm(9), bg=C["surface"], fg=C["text2"]).pack(side="right")
-        tk.Frame(body, bg=C["border"], height=1).pack(fill="x", pady=6)
-        r_t = tk.Frame(body, bg=C["surface"])
+            tk.Label(r, text=lbl, font=ff(7, "bold"), bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(side="left")
+            tk.Label(r, text=val, font=ff(8, "bold"), bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(side="right")
+
+        tk.Frame(body, bg=C["surface_high"], height=1).pack(fill="x", pady=12)
+
+        r_t = tk.Frame(body, bg=C["surface_lowest"])
         r_t.pack(fill="x")
-        tk.Label(r_t, text="TOTAL", font=ff(13, "bold"),
-                 bg=C["surface"], fg=C["text"]).pack(side="left")
-        tk.Label(r_t, text=f"${total:,.2f}", font=fm(16, "bold"),
-                 bg=C["surface"], fg=C["green"]).pack(side="right")
+        tk.Label(r_t, text="TOTAL", font=fh(14, "bold italic"),
+                 bg=C["surface_lowest"], fg=C["primary"]).pack(side="left")
+        tk.Label(r_t, text=f"${total:,.2f}", font=ff(20, "bold"),
+                 bg=C["surface_lowest"], fg=C["primary"]).pack(side="right")
 
-        tk.Frame(body, bg=C["border"], height=1).pack(fill="x", pady=10)
+        tk.Frame(body, bg=C["surface_high"], height=1).pack(fill="x", pady=16)
 
-        tk.Label(body, text="Con cuánto paga el cliente:", font=ff(9, "bold"),
-                 bg=C["surface"], fg=C["text2"]).pack(anchor="w")
+        tk.Label(body, text="CUSTOMER PAID WITH:", font=ff(7, "bold"),
+                 bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(anchor="w")
 
-        cash_wrap = tk.Frame(body, bg=C["surface"],
-                             highlightthickness=2, highlightbackground=C["green_mid"])
+        cash_wrap = tk.Frame(body, bg=C["surface_highest"],
+                             highlightthickness=0)
         cash_wrap.pack(fill="x", pady=(4, 0))
-        tk.Label(cash_wrap, text="$", font=fm(16, "bold"),
-                 bg=C["surface"], fg=C["text2"], padx=8).pack(side="left")
+        tk.Label(cash_wrap, text="$", font=ff(14, "bold"),
+                 bg=C["surface_highest"], fg=C["on_surface"], padx=16).pack(side="left")
         cash_var = tk.StringVar()
         entry_cash = tk.Entry(cash_wrap, textvariable=cash_var,
-                              font=fm(16, "bold"), bg=C["surface"],
-                              fg=C["text"], insertbackground=C["green"],
+                              font=ff(16, "bold"), bg=C["surface_highest"],
+                              fg=C["on_surface"], insertbackground=C["primary"],
                               relief="flat", bd=0, width=12, justify="right")
-        entry_cash.pack(side="left", fill="x", expand=True, pady=12, padx=(0, 12))
+        entry_cash.pack(side="left", fill="x", expand=True, pady=16, padx=(0, 16))
         entry_cash.focus_set()
 
-        change_frame = tk.Frame(body, bg=C["surface"])
-        change_frame.pack(fill="x", pady=6)
-        tk.Label(change_frame, text="Cambio:", font=ff(11, "bold"),
-                 bg=C["surface"], fg=C["text2"]).pack(side="left")
-        lbl_change = tk.Label(change_frame, text="—", font=fm(16, "bold"),
-                              bg=C["surface"], fg=C["text3"])
+        change_frame = tk.Frame(body, bg=C["surface_lowest"])
+        change_frame.pack(fill="x", pady=12)
+        tk.Label(change_frame, text="CHANGE DUE:", font=ff(7, "bold"),
+                 bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(side="left")
+        lbl_change = tk.Label(change_frame, text="—", font=ff(18, "bold"),
+                              bg=C["surface_lowest"], fg=C["on_surface"])
         lbl_change.pack(side="right")
 
-        quick_frame = tk.Frame(body, bg=C["surface"])
+        quick_frame = tk.Frame(body, bg=C["surface_lowest"])
         quick_frame.pack(fill="x", pady=(4, 10))
         tk.Label(quick_frame, text="Rápidos:", font=ff(8),
                  bg=C["surface"], fg=C["text3"]).pack(side="left", padx=(0, 8))
@@ -1378,25 +1442,30 @@ class CajaApp(tk.Tk):
             suggestions = [500, 1000]
 
         for amt in suggestions:
-            b = tk.Label(quick_frame, text=f"${int(amt):,}", font=ff(9, "bold"),
-                         bg=C["bg2"], fg=C["text"], padx=10, pady=4,
+            b = tk.Label(quick_frame, text=f"${int(amt):,}", font=ff(7, "bold"),
+                         bg=C["surface_low"], fg=C["on_surface"], padx=12, pady=8,
                          cursor="hand2", relief="flat")
             b.pack(side="left", padx=2)
             b.bind("<Button-1>", lambda e, a=amt: set_amount(a))
 
         def _recalc(*args):
             try:
-                paid = float(cash_var.get().replace(",", ""))
+                paid_str = cash_var.get().replace(",", "")
+                if not paid_str:
+                    lbl_change.config(text="—", fg=C["on_surface"])
+                    btn_confirm.config(state="disabled", bg=C["surface_high"], fg=C["on_surface_variant"])
+                    return
+                paid = float(paid_str)
                 cambio = paid - total
                 if cambio < 0:
-                    lbl_change.config(text=f"-${abs(cambio):,.2f}", fg=C["red"])
-                    btn_confirm.config(state="disabled", bg=C["text3"])
+                    lbl_change.config(text=f"-${abs(cambio):,.2f}", fg=C["error"])
+                    btn_confirm.config(state="disabled", bg=C["surface_high"], fg=C["on_surface_variant"])
                 else:
-                    lbl_change.config(text=f"${cambio:,.2f}", fg=C["green"])
-                    btn_confirm.config(state="normal", bg=C["green"])
+                    lbl_change.config(text=f"${cambio:,.2f}", fg=C["primary"])
+                    btn_confirm.config(state="normal", bg=C["primary"], fg="white")
             except ValueError:
-                lbl_change.config(text="—", fg=C["text3"])
-                btn_confirm.config(state="disabled", bg=C["text3"])
+                lbl_change.config(text="—", fg=C["on_surface"])
+                btn_confirm.config(state="disabled", bg=C["surface_high"], fg=C["on_surface_variant"])
 
         cash_var.trace_add("write", _recalc)
         entry_cash.bind("<Return>", lambda e: _confirm_cash())
@@ -1413,21 +1482,21 @@ class CajaApp(tk.Tk):
             self._show_cash_success(folio, total, subtotal, tax,
                                     cart_snapshot, paid, cambio_val)
 
-        btn_confirm = tk.Button(body, text="✓  Confirmar cobro",
-                                font=ff(12, "bold"),
-                                bg=C["text3"], fg="white",
-                                activebackground=C["green_hover"],
+        btn_confirm = tk.Button(body, text="COMPLETE CASH SALE",
+                                font=ff(9, "bold"),
+                                bg=C["surface_high"], fg=C["on_surface_variant"],
+                                activebackground=C["primary"],
                                 relief="flat", bd=0, cursor="hand2",
                                 state="disabled",
                                 command=_confirm_cash)
-        btn_confirm.pack(fill="x", ipady=13, pady=(6, 4))
+        btn_confirm.pack(fill="x", ipady=16, pady=(12, 4))
 
-        btn_cancel = tk.Button(body, text="Cancelar",
-                               font=ff(9), bg=C["surface"], fg=C["text3"],
-                               activebackground=C["bg2"],
+        btn_cancel = tk.Button(body, text="CANCEL TRANSACTION",
+                               font=ff(7, "bold"), bg=C["surface_lowest"], fg=C["on_surface_variant"],
+                               activebackground=C["surface_low"],
                                relief="flat", bd=0, cursor="hand2",
                                command=lambda: [dlg.destroy(), self._reset_for_new_sale()])
-        btn_cancel.pack(fill="x", ipady=6)
+        btn_cancel.pack(fill="x", ipady=8)
 
         dlg.bind("<Escape>", lambda e: [dlg.destroy(), self._reset_for_new_sale()])
 
@@ -1437,81 +1506,81 @@ class CajaApp(tk.Tk):
     def _show_cash_success(self, folio, total, subtotal, tax,
                            cart_snapshot, paid, cambio):
         dlg = tk.Toplevel(self)
-        dlg.title("¡Venta Exitosa!")
-        dlg.configure(bg=C["surface"])
+        dlg.title("TRANSACTION COMPLETE")
+        dlg.configure(bg=C["surface_lowest"])
         dlg.resizable(False, False)
         dlg.grab_set()
         dlg.attributes("-topmost", True)
 
-        w, h = 420, 540
+        w, h = 420, 560
         x = self.winfo_x() + (self.winfo_width()  - w) // 2
         y = self.winfo_y() + (self.winfo_height() - h) // 2
         dlg.geometry(f"{w}x{h}+{x}+{y}")
 
-        hdr = tk.Frame(dlg, bg=C["surface"])
-        hdr.pack(fill="x", padx=24, pady=16)
-        tk.Label(hdr, text="¡Listo!", font=ff(18, "bold"),
-                 bg=C["surface"], fg=C["text"]).pack(side="left")
+        hdr = tk.Frame(dlg, bg=C["surface_lowest"])
+        hdr.pack(fill="x", padx=32, pady=24)
+        tk.Label(hdr, text="SUCCESS", font=ff(7, "bold"),
+                 bg=C["surface_lowest"], fg=C["primary"]).pack(side="left")
 
-        chk_bg = tk.Frame(dlg, bg=C["green_pale"], width=72, height=72)
-        chk_bg.pack()
+        chk_bg = tk.Frame(dlg, bg=C["green_pale"], width=64, height=64)
+        chk_bg.pack(pady=8)
         chk_bg.pack_propagate(False)
-        tk.Label(chk_bg, text="✓", font=ff(28, "bold"),
-                 bg=C["green_pale"], fg=C["green"]).place(relx=0.5, rely=0.5, anchor="center")
+        tk.Label(chk_bg, text="✓", font=ff(24, "bold"),
+                 bg=C["green_pale"], fg=C["primary"]).place(relx=0.5, rely=0.5, anchor="center")
 
-        tk.Label(dlg, text="¡Venta Exitosa!", font=ff(15, "bold"),
-                 bg=C["surface"], fg=C["text"]).pack(pady=(8, 2))
+        tk.Label(dlg, text="Venta Exitosa", font=fh(18, "bold"),
+                 bg=C["surface_lowest"], fg=C["on_surface"]).pack(pady=(8, 2))
         tk.Label(dlg,
-                 text=f"Ticket {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}",
-                 font=ff(8), bg=C["surface"], fg=C["text3"]).pack()
+                 text=f"TICKET {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}".upper(),
+                 font=ff(7, "bold"), bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack()
 
-        cambio_frame = tk.Frame(dlg, bg=C["green_pale"], pady=14)
-        cambio_frame.pack(fill="x", padx=24, pady=12)
-        tk.Label(cambio_frame, text="CAMBIO", font=ff(10, "bold"),
-                 bg=C["green_pale"], fg=C["green_mid"]).pack()
-        tk.Label(cambio_frame, text=f"${cambio:,.2f}", font=fm(26, "bold"),
-                 bg=C["green_pale"], fg=C["green"]).pack()
+        cambio_frame = tk.Frame(dlg, bg=C["surface_low"], pady=16)
+        cambio_frame.pack(fill="x", padx=32, pady=20)
+        tk.Label(cambio_frame, text="CHANGE DUE", font=ff(7, "bold"),
+                 bg=C["surface_low"], fg=C["on_surface_variant"]).pack()
+        tk.Label(cambio_frame, text=f"${cambio:,.2f}", font=ff(24, "bold"),
+                 bg=C["surface_low"], fg=C["primary"]).pack()
         tk.Label(cambio_frame,
-                 text=f"  Recibido: ${paid:,.2f}  ·  Total: ${total:,.2f}  ",
-                 font=ff(8), bg=C["green_pale"], fg=C["green_mid"]).pack()
+                 text=f"Received: ${paid:,.2f}  ·  Total: ${total:,.2f}",
+                 font=ff(7), bg=C["surface_low"], fg=C["on_surface_variant"]).pack(pady=(4, 0))
 
-        items_bg = tk.Frame(dlg, bg=C["bg2"])
-        items_bg.pack(fill="x", padx=24, pady=(0, 8))
-        items_inner = tk.Frame(items_bg, bg=C["bg2"], padx=12, pady=8)
+        items_bg = tk.Frame(dlg, bg=C["surface_lowest"])
+        items_bg.pack(fill="x", padx=32, pady=(0, 12))
+        items_inner = tk.Frame(items_bg, bg=C["surface_low"], padx=16, pady=12)
         items_inner.pack(fill="x")
         for item in cart_snapshot:
-            r = tk.Frame(items_inner, bg=C["bg2"])
-            r.pack(fill="x", pady=1)
+            r = tk.Frame(items_inner, bg=C["surface_low"])
+            r.pack(fill="x", pady=2)
             raw_emoji = item["product"].get("emoji", "📦")
             emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
             nombre = item["product"].get("nombre", "")
             name = f"{emoji} {nombre} ×{item['qty']}"
-            tk.Label(r, text=name, font=ff(9), bg=C["bg2"],
-                     fg=C["text"], anchor="w").pack(side="left")
-            tk.Label(r, text=f"${item['subtotal']:,.2f}", font=fm(9),
-                     bg=C["bg2"], fg=C["text"]).pack(side="right")
+            tk.Label(r, text=name, font=ff(8), bg=C["surface_low"],
+                     fg=C["on_surface"], anchor="w").pack(side="left")
+            tk.Label(r, text=f"${item['subtotal']:,.2f}", font=ff(8, "bold"),
+                     bg=C["surface_low"], fg=C["on_surface"]).pack(side="right")
 
-        btn_row = tk.Frame(dlg, bg=C["surface"])
-        btn_row.pack(fill="x", padx=24, pady=(0, 4))
-        tk.Button(btn_row, text="🖨  Imprimir", font=ff(9),
-                  bg=C["surface"], fg=C["text"], relief="solid", bd=1,
-                  padx=12, pady=7, cursor="hand2").pack(side="left", fill="x",
-                                                         expand=True, padx=(0, 5))
-        tk.Button(btn_row, text="📧  Enviar", font=ff(9),
-                  bg=C["surface"], fg=C["text"], relief="solid", bd=1,
-                  padx=12, pady=7, cursor="hand2").pack(side="left", fill="x", expand=True)
+        btn_row = tk.Frame(dlg, bg=C["surface_lowest"])
+        btn_row.pack(fill="x", padx=32, pady=(0, 12))
+        tk.Button(btn_row, text="PRINT RECEIPT", font=ff(7, "bold"),
+                  bg=C["surface_high"], fg=C["on_surface"], relief="flat", bd=0,
+                  padx=12, pady=10, cursor="hand2").pack(side="left", fill="x",
+                                                         expand=True, padx=(0, 8))
+        tk.Button(btn_row, text="SEND EMAIL", font=ff(7, "bold"),
+                  bg=C["surface_high"], fg=C["on_surface"], relief="flat", bd=0,
+                  padx=12, pady=10, cursor="hand2").pack(side="left", fill="x", expand=True)
 
         def close_and_reset():
             dlg.destroy()
             self._reset_for_new_sale()
 
-        nueva_btn = tk.Button(dlg, text="Nueva Venta",
-                              font=ff(12, "bold"),
-                              bg=C["green"], fg="white",
-                              activebackground=C["green_hover"],
+        nueva_btn = tk.Button(dlg, text="NEW TRANSACTION",
+                              font=ff(9, "bold"),
+                              bg=C["primary"], fg="white",
+                              activebackground=C["primary"],
                               relief="flat", bd=0, cursor="hand2",
                               command=close_and_reset)
-        nueva_btn.pack(fill="x", padx=24, pady=(4, 20), ipady=12)
+        nueva_btn.pack(fill="x", padx=32, pady=(4, 24), ipady=16)
         nueva_btn.focus_set()
 
         dlg.bind("<Return>", lambda e: close_and_reset())
@@ -1524,84 +1593,84 @@ class CajaApp(tk.Tk):
     # ════════════════════════════════════════════════════════════
     def _show_card_modal(self, folio, total, subtotal, tax, cart_snapshot):
         dlg = tk.Toplevel(self)
-        dlg.title("Cobro con Tarjeta")
-        dlg.configure(bg=C["surface"])
+        dlg.title("CARD PAYMENT")
+        dlg.configure(bg=C["surface_lowest"])
         dlg.resizable(False, False)
         dlg.grab_set()
         dlg.attributes("-topmost", True)
 
-        w, h = 440, 560
+        w, h = 440, 580
         x = self.winfo_x() + (self.winfo_width()  - w) // 2
         y = self.winfo_y() + (self.winfo_height() - h) // 2
         dlg.geometry(f"{w}x{h}+{x}+{y}")
 
-        hdr = tk.Frame(dlg, bg="#1A2B4A", pady=20)
+        hdr = tk.Frame(dlg, bg="#1A2B4A", pady=32)
         hdr.pack(fill="x")
         tk.Label(hdr, text="💳", font=ff(32), bg="#1A2B4A").pack()
-        tk.Label(hdr, text="Cobro con Tarjeta", font=ff(14, "bold"),
+        tk.Label(hdr, text="CARD PAYMENT", font=fh(16, "bold"),
                  bg="#1A2B4A", fg="white").pack(pady=(4, 0))
         tk.Label(hdr,
-                 text=f"Ticket {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}",
-                 font=ff(8), bg="#1A2B4A", fg="#7A9CC0").pack()
+                 text=f"TICKET {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}".upper(),
+                 font=ff(7, "bold"), bg="#1A2B4A", fg="#7A9CC0").pack()
 
-        body = tk.Frame(dlg, bg=C["surface"])
-        body.pack(fill="both", expand=True, padx=28, pady=16)
+        body = tk.Frame(dlg, bg=C["surface_lowest"])
+        body.pack(fill="both", expand=True, padx=32, pady=24)
 
-        total_frame = tk.Frame(body, bg=C["surface"])
-        total_frame.pack(pady=(0, 12))
-        tk.Label(total_frame, text="Total a cobrar", font=ff(10),
-                 bg=C["surface"], fg=C["text2"]).pack()
-        tk.Label(total_frame, text=f"${total:,.2f}", font=fm(24, "bold"),
-                 bg=C["surface"], fg="#1A2B4A").pack()
+        total_frame = tk.Frame(body, bg=C["surface_lowest"])
+        total_frame.pack(pady=(0, 16))
+        tk.Label(total_frame, text="TOTAL TO CHARGE", font=ff(7, "bold"),
+                 bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack()
+        tk.Label(total_frame, text=f"${total:,.2f}", font=ff(24, "bold"),
+                 bg=C["surface_lowest"], fg="#1A2B4A").pack()
 
-        terminal_frame = tk.Frame(body, bg="#F0F4FA", pady=16)
-        terminal_frame.pack(fill="x", pady=(0, 12))
+        terminal_frame = tk.Frame(body, bg="#F0F4FA", pady=20)
+        terminal_frame.pack(fill="x", pady=(0, 16))
         tk.Label(terminal_frame, text="⬛", font=ff(28),
                  bg="#F0F4FA", fg="#333").pack()
-        tk.Label(terminal_frame, text="Pointer  ·  Terminal no conectada",
-                 font=ff(9, "bold"), bg="#F0F4FA", fg="#1A2B4A").pack(pady=(6, 2))
+        tk.Label(terminal_frame, text="Pointer  ·  Terminal not connected",
+                 font=ff(8, "bold"), bg="#F0F4FA", fg="#1A2B4A").pack(pady=(6, 2))
         lbl_status = tk.Label(terminal_frame,
                                text="⚠  Integración pendiente — confirma manualmente",
                                font=ff(8), bg="#F0F4FA", fg=C["amber"])
         lbl_status.pack()
 
-        prog_outer = tk.Frame(body, bg=C["border"], height=4)
+        prog_outer = tk.Frame(body, bg=C["surface_high"], height=4)
         prog_outer.pack(fill="x", pady=4)
         prog_bar = tk.Frame(prog_outer, bg="#1A2B4A", height=4, width=0)
         prog_bar.place(x=0, y=0, relheight=1)
 
-        items_bg = tk.Frame(body, bg=C["bg2"], pady=2)
+        items_bg = tk.Frame(body, bg=C["surface_low"], pady=8)
         items_bg.pack(fill="x", pady=(8, 0))
         for item in cart_snapshot:
-            r = tk.Frame(items_bg, bg=C["bg2"])
-            r.pack(fill="x", padx=12, pady=2)
+            r = tk.Frame(items_bg, bg=C["surface_low"])
+            r.pack(fill="x", padx=16, pady=2)
             raw_emoji = item["product"].get("emoji", "📦")
             emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
             nombre = item["product"].get("nombre", "")
             name = f"{emoji} {nombre} ×{item['qty']}"
-            tk.Label(r, text=name, font=ff(9), bg=C["bg2"],
-                     fg=C["text"], anchor="w").pack(side="left")
-            tk.Label(r, text=f"${item['subtotal']:,.2f}", font=fm(9),
-                     bg=C["bg2"], fg=C["text"]).pack(side="right")
+            tk.Label(r, text=name, font=ff(8), bg=C["surface_low"],
+                     fg=C["on_surface"], anchor="w").pack(side="left")
+            tk.Label(r, text=f"${item['subtotal']:,.2f}", font=ff(8, "bold"),
+                     bg=C["surface_low"], fg=C["on_surface"]).pack(side="right")
 
         def _confirm_card():
             dlg.destroy()
             self._show_card_success(folio, total, subtotal, tax, cart_snapshot)
 
-        btn_confirm = tk.Button(body, text="✓  Pago Confirmado (Manual)",
-                                font=ff(11, "bold"),
+        btn_confirm = tk.Button(body, text="CONFIRM MANUAL PAYMENT",
+                                font=ff(9, "bold"),
                                 bg="#1A2B4A", fg="white",
                                 activebackground="#243D6A",
                                 relief="flat", bd=0, cursor="hand2",
                                 command=_confirm_card)
-        btn_confirm.pack(fill="x", ipady=13, pady=(12, 4))
+        btn_confirm.pack(fill="x", ipady=16, pady=(16, 4))
 
-        btn_cancel = tk.Button(body, text="Cancelar transacción",
-                               font=ff(9), bg=C["surface"], fg=C["text3"],
-                               activebackground=C["bg2"],
+        btn_cancel = tk.Button(body, text="CANCEL TRANSACTION",
+                               font=ff(7, "bold"), bg=C["surface_lowest"], fg=C["on_surface_variant"],
+                               activebackground=C["surface_low"],
                                relief="flat", bd=0, cursor="hand2",
                                command=lambda: [dlg.destroy(), self._reset_for_new_sale()])
-        btn_cancel.pack(fill="x", ipady=6)
+        btn_cancel.pack(fill="x", ipady=8)
 
         def animate(step=0):
             try:
@@ -1624,78 +1693,78 @@ class CajaApp(tk.Tk):
     # ════════════════════════════════════════════════════════════
     def _show_card_success(self, folio, total, subtotal, tax, cart_snapshot):
         dlg = tk.Toplevel(self)
-        dlg.title("Pago con Tarjeta Exitoso")
-        dlg.configure(bg=C["surface"])
+        dlg.title("TRANSACTION COMPLETE")
+        dlg.configure(bg=C["surface_lowest"])
         dlg.resizable(False, False)
         dlg.grab_set()
         dlg.attributes("-topmost", True)
 
-        w, h = 420, 500
+        w, h = 420, 560
         x = self.winfo_x() + (self.winfo_width()  - w) // 2
         y = self.winfo_y() + (self.winfo_height() - h) // 2
         dlg.geometry(f"{w}x{h}+{x}+{y}")
 
-        hdr = tk.Frame(dlg, bg=C["surface"])
-        hdr.pack(fill="x", padx=24, pady=16)
-        tk.Label(hdr, text="¡Listo!", font=ff(18, "bold"),
-                 bg=C["surface"], fg=C["text"]).pack(side="left")
+        hdr = tk.Frame(dlg, bg=C["surface_lowest"])
+        hdr.pack(fill="x", padx=32, pady=24)
+        tk.Label(hdr, text="SUCCESS", font=ff(7, "bold"),
+                 bg=C["surface_lowest"], fg="#1A2B4A").pack(side="left")
 
-        chk_bg = tk.Frame(dlg, bg="#EEF2FF", width=72, height=72)
-        chk_bg.pack()
+        chk_bg = tk.Frame(dlg, bg="#EEF2FF", width=64, height=64)
+        chk_bg.pack(pady=8)
         chk_bg.pack_propagate(False)
-        tk.Label(chk_bg, text="✓", font=ff(28, "bold"),
+        tk.Label(chk_bg, text="✓", font=ff(24, "bold"),
                  bg="#EEF2FF", fg="#1A2B4A").place(relx=0.5, rely=0.5, anchor="center")
 
-        tk.Label(dlg, text="Pago con Tarjeta Aprobado", font=ff(15, "bold"),
-                 bg=C["surface"], fg=C["text"]).pack(pady=(8, 2))
+        tk.Label(dlg, text="Pago Aprobado", font=fh(18, "bold"),
+                 bg=C["surface_lowest"], fg=C["on_surface"]).pack(pady=(8, 2))
         tk.Label(dlg,
-                 text=f"Ticket {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}",
-                 font=ff(8), bg=C["surface"], fg=C["text3"]).pack()
+                 text=f"TICKET {folio}  ·  {datetime.now().strftime('%d %b %Y  %I:%M %p')}".upper(),
+                 font=ff(7, "bold"), bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack()
 
-        total_f = tk.Frame(dlg, bg="#EEF2FF", pady=10)
-        total_f.pack(fill="x", padx=24, pady=10)
-        tk.Label(total_f, text=f"${total:,.2f}", font=fm(22, "bold"),
+        total_f = tk.Frame(dlg, bg="#EEF2FF", pady=16)
+        total_f.pack(fill="x", padx=32, pady=20)
+        tk.Label(total_f, text=f"${total:,.2f}", font=ff(24, "bold"),
                  bg="#EEF2FF", fg="#1A2B4A").pack()
-        tk.Label(total_f, text="💳  Tarjeta", font=ff(9),
+        tk.Label(total_f, text="CARD PAYMENT", font=ff(7, "bold"),
                  bg="#EEF2FF", fg="#4A6A9A").pack()
 
-        items_bg = tk.Frame(dlg, bg=C["bg2"])
-        items_bg.pack(fill="x", padx=24, pady=(0, 8))
-        items_inner = tk.Frame(items_bg, bg=C["bg2"], padx=12, pady=8)
+        items_bg = tk.Frame(dlg, bg=C["surface_lowest"])
+        items_bg.pack(fill="x", padx=32, pady=(0, 12))
+        items_inner = tk.Frame(items_bg, bg=C["surface_low"], padx=16, pady=12)
         items_inner.pack(fill="x")
         for item in cart_snapshot:
-            r = tk.Frame(items_inner, bg=C["bg2"])
-            r.pack(fill="x", pady=1)
+            r = tk.Frame(items_inner, bg=C["surface_low"])
+            r.pack(fill="x", pady=2)
             raw_emoji = item["product"].get("emoji", "📦")
             emoji = raw_emoji if len(str(raw_emoji)) <= 4 else "📦"
             nombre = item["product"].get("nombre", "")
             name = f"{emoji} {nombre} ×{item['qty']}"
-            tk.Label(r, text=name, font=ff(9), bg=C["bg2"],
-                     fg=C["text"], anchor="w").pack(side="left")
-            tk.Label(r, text=f"${item['subtotal']:,.2f}", font=fm(9),
-                     bg=C["bg2"], fg=C["text"]).pack(side="right")
+            tk.Label(r, text=name, font=ff(8), bg=C["surface_low"],
+                     fg=C["on_surface"], anchor="w").pack(side="left")
+            tk.Label(r, text=f"${item['subtotal']:,.2f}", font=ff(8, "bold"),
+                     bg=C["surface_low"], fg=C["on_surface"]).pack(side="right")
 
-        btn_row = tk.Frame(dlg, bg=C["surface"])
-        btn_row.pack(fill="x", padx=24, pady=(0, 4))
-        tk.Button(btn_row, text="🖨  Imprimir", font=ff(9),
-                  bg=C["surface"], fg=C["text"], relief="solid", bd=1,
-                  padx=12, pady=7, cursor="hand2").pack(side="left", fill="x",
-                                                         expand=True, padx=(0, 5))
-        tk.Button(btn_row, text="📧  Enviar", font=ff(9),
-                  bg=C["surface"], fg=C["text"], relief="solid", bd=1,
-                  padx=12, pady=7, cursor="hand2").pack(side="left", fill="x", expand=True)
+        btn_row = tk.Frame(dlg, bg=C["surface_lowest"])
+        btn_row.pack(fill="x", padx=32, pady=(0, 12))
+        tk.Button(btn_row, text="PRINT RECEIPT", font=ff(7, "bold"),
+                  bg=C["surface_high"], fg=C["on_surface"], relief="flat", bd=0,
+                  padx=12, pady=10, cursor="hand2").pack(side="left", fill="x",
+                                                         expand=True, padx=(0, 8))
+        tk.Button(btn_row, text="SEND EMAIL", font=ff(7, "bold"),
+                  bg=C["surface_high"], fg=C["on_surface"], relief="flat", bd=0,
+                  padx=12, pady=10, cursor="hand2").pack(side="left", fill="x", expand=True)
 
         def close_and_reset():
             dlg.destroy()
             self._reset_for_new_sale()
 
-        nueva_btn = tk.Button(dlg, text="Nueva Venta",
-                              font=ff(12, "bold"),
+        nueva_btn = tk.Button(dlg, text="NEW TRANSACTION",
+                              font=ff(9, "bold"),
                               bg="#1A2B4A", fg="white",
                               activebackground="#243D6A",
                               relief="flat", bd=0, cursor="hand2",
                               command=close_and_reset)
-        nueva_btn.pack(fill="x", padx=24, pady=(4, 20), ipady=12)
+        nueva_btn.pack(fill="x", padx=32, pady=(4, 24), ipady=16)
         nueva_btn.focus_set()
 
         dlg.bind("<Return>", lambda e: close_and_reset())
@@ -1785,55 +1854,55 @@ class LoginWindow(tk.Tk):
         tk.Label(top_bg, text="Caja", font=ff(8),
                  bg=C["header"], fg=C["header_dim"]).place(relx=0.5, rely=0.88, anchor="center")
 
-        card = tk.Frame(self, bg=C["surface"], padx=36, pady=32)
+        card = tk.Frame(self, bg=C["surface_lowest"], padx=36, pady=32)
         card.pack(fill="both", expand=True)
 
-        tk.Label(card, text="Iniciar sesión", font=ff(15, "bold"),
-                 bg=C["surface"], fg=C["text"]).pack(anchor="w")
+        tk.Label(card, text="Iniciar sesión", font=fh(15, "bold"),
+                 bg=C["surface_lowest"], fg=C["on_surface"]).pack(anchor="w")
         tk.Label(card, text="Ingresa tus credenciales para continuar",
-                 font=ff(9), bg=C["surface"], fg=C["text3"]).pack(anchor="w", pady=(2, 20))
+                 font=ff(9), bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(anchor="w", pady=(2, 20))
 
-        tk.Label(card, text="Usuario", font=ff(9, "bold"),
-                 bg=C["surface"], fg=C["text2"]).pack(anchor="w")
-        user_wrap = tk.Frame(card, bg=C["surface"],
-                             highlightthickness=1, highlightbackground=C["border2"])
+        tk.Label(card, text="USUARIO", font=ff(7, "bold"),
+                 bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(anchor="w")
+        user_wrap = tk.Frame(card, bg=C["surface_highest"],
+                             highlightthickness=0)
         user_wrap.pack(fill="x", pady=(4, 14))
-        self.entry_user = tk.Entry(user_wrap, font=ff(11), bg=C["surface"], fg=C["text"],
-                                   insertbackground=C["green"], relief="flat", bd=0)
-        self.entry_user.pack(fill="x", padx=12, pady=10)
+        self.entry_user = tk.Entry(user_wrap, font=ff(11), bg=C["surface_highest"], fg=C["on_surface"],
+                                   insertbackground=C["primary"], relief="flat", bd=0)
+        self.entry_user.pack(fill="x", padx=12, pady=12)
         self.entry_user.bind("<FocusIn>",
-                             lambda e: user_wrap.config(highlightbackground=C["green_mid"], highlightthickness=2))
+                             lambda e: user_wrap.config(bg=C["surface_high"]))
         self.entry_user.bind("<FocusOut>",
-                             lambda e: user_wrap.config(highlightbackground=C["border2"], highlightthickness=1))
+                             lambda e: user_wrap.config(bg=C["surface_highest"]))
         self.entry_user.bind("<Return>", lambda e: self.entry_pass.focus_set())
 
-        tk.Label(card, text="Contraseña", font=ff(9, "bold"),
-                 bg=C["surface"], fg=C["text2"]).pack(anchor="w")
-        pass_wrap = tk.Frame(card, bg=C["surface"],
-                             highlightthickness=1, highlightbackground=C["border2"])
+        tk.Label(card, text="CONTRASEÑA", font=ff(7, "bold"),
+                 bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(anchor="w")
+        pass_wrap = tk.Frame(card, bg=C["surface_highest"],
+                             highlightthickness=0)
         pass_wrap.pack(fill="x", pady=(4, 6))
-        self.entry_pass = tk.Entry(pass_wrap, font=ff(11), bg=C["surface"], fg=C["text"],
-                                   insertbackground=C["green"], show="●", relief="flat", bd=0)
-        self.entry_pass.pack(fill="x", padx=12, pady=10)
+        self.entry_pass = tk.Entry(pass_wrap, font=ff(11), bg=C["surface_highest"], fg=C["on_surface"],
+                                   insertbackground=C["primary"], show="●", relief="flat", bd=0)
+        self.entry_pass.pack(fill="x", padx=12, pady=12)
         self.entry_pass.bind("<FocusIn>",
-                             lambda e: pass_wrap.config(highlightbackground=C["green_mid"], highlightthickness=2))
+                             lambda e: pass_wrap.config(bg=C["surface_high"]))
         self.entry_pass.bind("<FocusOut>",
-                             lambda e: pass_wrap.config(highlightbackground=C["border2"], highlightthickness=1))
+                             lambda e: pass_wrap.config(bg=C["surface_highest"]))
         self.entry_pass.bind("<Return>", lambda e: self._do_login())
 
         self.lbl_error = tk.Label(card, text="", font=ff(9),
-                                   bg=C["surface"], fg=C["red"])
+                                   bg=C["surface_lowest"], fg=C["error"])
         self.lbl_error.pack(anchor="w", pady=(0, 12))
 
-        login_btn = tk.Button(card, text="Entrar", font=ff(12, "bold"),
-                              bg=C["green"], fg="white",
-                              activebackground=C["green_hover"],
+        login_btn = tk.Button(card, text="ENTRAR", font=ff(9, "bold"),
+                              bg=C["primary"], fg="white",
+                              activebackground=C["primary"],
                               relief="flat", bd=0, cursor="hand2",
                               command=self._do_login)
-        login_btn.pack(fill="x", ipady=12)
+        login_btn.pack(fill="x", ipady=14)
 
         tk.Label(card, text="usuario: prueba  ·  contraseña: prueba",
-                 font=ff(8), bg=C["surface"], fg=C["text3"]).pack(pady=(14, 0))
+                 font=ff(7), bg=C["surface_lowest"], fg=C["on_surface_variant"]).pack(pady=(14, 0))
 
         self.entry_user.focus_set()
 
